@@ -3,6 +3,7 @@
 #include "game.h"
 
 
+
 void generate_default_context () {
   bzero (&context, sizeof (t_context)) ;
   context.buildings = new_chained_list () ;

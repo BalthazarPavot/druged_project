@@ -19,6 +19,7 @@ typedef t_parameters* p_parameters ;
 typedef struct s_player t_player ;
 typedef t_player* p_player ;
 
+t_context context ;
 
 struct s_parameters {
   int building_velocity ;
@@ -37,9 +38,9 @@ struct s_player {
 struct s_context {
   char **argv ;
   t_parameters parameters ;
-  t_chained_list buildings ;
-  t_chained_list obstacles ;
-  t_chained_list bonus ;
+  p_chained_list buildings ;
+  p_chained_list obstacles ;
+  p_chained_list bonus ;
   t_player player ;
   int argc ;
   int window_id ;

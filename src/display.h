@@ -6,6 +6,7 @@
 #include "GL/gl.h"
 #include "GL/glut.h"
 #include "ktree.h"
+#include "chained_list.h"
 
 #define SPHERE    0x01
 #define CYLINDRE  0x02
@@ -46,14 +47,21 @@ struct s_player_object_3D {
   t_object_3D vehicle ;
 } ;
 
+void *display_cylinder (p_object_3D cylinder) ;
+void *display_cone (p_object_3D cone) ;
+void *display_sphere (p_object_3D sphere) ;
+void *display_cube (p_object_3D cube) ;
 void display_background (void) ;
 void display_road (void) ;
 void display_buildings (void) ;
-void display_obstacle (void) ;
-void display_bonus (void) ;
+void display_obstacles (void) ;
+void display_all_bonus (void) ;
 void display_character (void) ;
 void display_screen (void) ;
 void animation (void) ;
+
+
+#include "common.h"
 
 
 #endif
