@@ -3,7 +3,6 @@
 #include "display.h"
 
 
-
 static void _display_cylinder () {
   /*
   GLUquadricObj *quadObj = gluNewQuadric();
@@ -47,31 +46,23 @@ static void _display_cube () {
 }
 
 void *display_cylinder (p_object_3D cylinder) {
-  /*
-  _display_cylinder ()...
-  */
-  return NULL ;
+  _display_cylinder () ;
+  return cylinder ;
 }
 
 void *display_cone (p_object_3D cone) {
-  /*
-  _display_cylinder ()...
-  */
-  return NULL ;
+  _display_cylinder () ;
+  return cone ;
 }
 
 void *display_sphere (p_object_3D sphere) {
-  /*
-  _display_sphere ()...
-  */
-  return NULL ;
+  _display_sphere () ;
+  return sphere ;
 }
 
 void *display_cube (p_object_3D cube) {
-  /*
-  _display_cube ()...
-  */
-  return NULL ;
+  _display_cube () ;
+  return cube ;
 }
 
 void display_background (void) {
@@ -89,15 +80,18 @@ void display_road (void) {
 }
 
 void display_building (p_object_3D building) {
-  
+  if (building->position.x > 100)
+    return ;
 }
 
 void display_obstacle (p_object_3D obstacle) {
-  
+  if (obstacle->position.x > 100)
+    return ;
 }
 
 void display_bonus (p_object_3D bonus) {
-  
+  if (bonus->position.x > 100)
+    return ;
 }
 
 void display_buildings (void) {
@@ -106,13 +100,13 @@ void display_buildings (void) {
   }
 }
 
-void display_obstacle (void) {
+void display_obstacles (void) {
   for_chained_list_value_of_type(context.obstacles, p_object_3D) {
     display_obstacle (value) ;
   }
 }
 
-void display_bonus (void) {
+void display_all_bonus (void) {
   for_chained_list_value_of_type(context.bonus, p_object_3D) {
     display_bonus (value) ;
   }
@@ -125,8 +119,8 @@ void display_screen (void) {
   display_background () ;
   display_road () ;
   display_buildings () ;
-  display_obstacle () ;
-  display_bonus () ;
+  display_obstacles () ;
+  display_all_bonus () ;
   display_character () ;
 }
 

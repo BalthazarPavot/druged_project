@@ -6,6 +6,10 @@
 
 #define K 8
 
+
+#include <stdlib.h>
+#include <stdio.h>
+
 typedef struct s_tree t_tree ;
 typedef t_tree* p_tree ;
 

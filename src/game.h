@@ -3,6 +3,9 @@
 #define _GAME_H
 
 
+#include <time.h>
+
+
 #include "GL/gl.h"
 #include "GL/glut.h"
 
@@ -14,6 +17,7 @@
 
 t_context context ;
 
+void generate_default_context () ;
 void parse_arguments (int argc, char *argv[]) ;
 void initialize_opengl () ;
 void generate_game () ;
