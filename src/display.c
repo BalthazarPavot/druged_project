@@ -88,13 +88,34 @@ void display_background (void) {
 void display_road (void) {
 }
 
+void display_building (p_object_3D building) {
+  
+}
+
+void display_obstacle (p_object_3D obstacle) {
+  
+}
+
+void display_bonus (p_object_3D bonus) {
+  
+}
+
 void display_buildings (void) {
+  for_chained_list_value_of_type(context.buildings, p_object_3D) {
+    display_building (value) ;
+  }
 }
 
 void display_obstacle (void) {
+  for_chained_list_value_of_type(context.obstacles, p_object_3D) {
+    display_obstacle (value) ;
+  }
 }
 
 void display_bonus (void) {
+  for_chained_list_value_of_type(context.bonus, p_object_3D) {
+    display_bonus (value) ;
+  }
 }
 
 void display_character (void) {
