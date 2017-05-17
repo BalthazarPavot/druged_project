@@ -5,6 +5,7 @@
 #define EMPTY NULL
 
 #define K 8
+#define MAX_DEPTH 8
 
 typedef struct s_tree t_tree ;
 typedef t_tree* p_tree ;
