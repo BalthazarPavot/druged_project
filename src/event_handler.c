@@ -16,7 +16,7 @@ void handle_keyboard (unsigned char key, int x, int y) {
     case 'd':
     case 'k':
       break ;
-    case 's:
+    case 's':
     case 'l':
       break ;
     case '\x1b': /* escape = '' = '\x1b' */
