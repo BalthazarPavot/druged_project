@@ -75,6 +75,14 @@ void *display_cube (p_object_3D cube) {
 }
 
 void display_background (void) {
+  glColor3f(0.039f, 0.341f, 0.078f);
+  glNormal3f(1.0f, 1.0f, 1.0f);
+  glBegin(GL_QUADS);
+  glVertex3f(-1500.0f, -8.0f, -1500.0f);
+  glVertex3f(-1500.0f, -8.0f,  1500.0f);
+  glVertex3f( 1500.0f, -8.0f,  1500.0f);
+  glVertex3f( 1500.0f, -8.0f, -1500.0f);
+  glEnd();
 }
 
 void display_road (void) {
