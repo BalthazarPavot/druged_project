@@ -43,12 +43,40 @@ void play_game () {
   glutMouseFunc (handle_mouse) ;
   glutKeyboardFunc (handle_keyboard);
 
+  glutSetWindow (context.window_id) ;
+
+  glFrustum (-2, 2, -2, 2, 2, 200) ;
+  gluLookAt (0, -50, 60, 0, 0, 0, 0, 0, 1) ;
+
   glutMainLoop ();
+  
+  exit_game () ;
 }
 
+void destroyContext () {
+  for_chained_list_value_of_type (context.buildings, p_building_3D) {
+    free_chained_list (value->objects) ;
+    value->objects = NULL ;
+  }
+  free_chained_list (context.buildings) ;
+  context.buildings = NULL ;
+  for_chained_list_value_of_type (context.obstacles, p_obstacle_3D) {
+    free_chained_list (value->objects) ;
+    value->objects = NULL ;
+  }
+  free_chained_list (context.obstacles) ;
+  context.obstacles = NULL ;
+  for_chained_list_value_of_type (context.bonus, p_bonus_3D) {
+    free_chained_list (value->objects) ;
+    value->objects = NULL ;
+  }
+  free_chained_list (context.bonus) ;
+  context.bonus = NULL ;
+}
 
 void exit_game () {
-  //glXDestroyContext (context.window_id, )
+  destroyContext () ;
+  glutLeaveMainLoop () ;
   glutDestroyWindow (context.window_id) ;
   exit (0) ;
 }
