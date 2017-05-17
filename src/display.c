@@ -79,35 +79,41 @@ void display_background (void) {
 void display_road (void) {
 }
 
-void display_building (p_object_3D building) {
-  if (building->position.x > 100)
-    return ;
+void display_building (p_building_3D building) {
+  for_chained_list_value_of_type (building->objects, p_object_3D) {
+    if (value->position.x - context.player.position > 100)
+      return ;
+  }
 }
 
-void display_obstacle (p_object_3D obstacle) {
-  if (obstacle->position.x > 100)
-    return ;
+void display_obstacle (p_obstacle_3D obstacle) {
+  for_chained_list_value_of_type (obstacle->objects, p_object_3D) {
+    if (value->position.x - context.player.position > 100)
+      return ;
+  }
 }
 
-void display_bonus (p_object_3D bonus) {
-  if (bonus->position.x > 100)
-    return ;
+void display_bonus (p_bonus_3D bonus) {
+  for_chained_list_value_of_type (bonus->objects, p_object_3D) {
+    if (value->position.x - context.player.position > 100)
+      return ;
+  }
 }
 
 void display_buildings (void) {
-  for_chained_list_value_of_type(context.buildings, p_object_3D) {
+  for_chained_list_value_of_type (context.buildings, p_building_3D) {
     display_building (value) ;
   }
 }
 
 void display_obstacles (void) {
-  for_chained_list_value_of_type(context.obstacles, p_object_3D) {
+  for_chained_list_value_of_type (context.obstacles, p_obstacle_3D) {
     display_obstacle (value) ;
   }
 }
 
 void display_all_bonus (void) {
-  for_chained_list_value_of_type(context.bonus, p_object_3D) {
+  for_chained_list_value_of_type (context.bonus, p_bonus_3D) {
     display_bonus (value) ;
   }
 }

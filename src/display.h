@@ -13,15 +13,26 @@
 #define CUBE      0x03
 #define CONE      0x04
 
-
 typedef struct s_player_object_3D t_player_object_3D ;
 typedef t_player_object_3D* p_player_object_3D ;
+
+typedef struct s_bonus_3D t_bonus_3D ;
+typedef t_bonus_3D* p_bonus_3D ;
+
+typedef struct s_obstacle_3D t_obstacle_3D ;
+typedef t_obstacle_3D* p_obstacle_3D ;
+
+typedef struct s_building_3D t_building_3D ;
+typedef t_building_3D* p_building_3D ;
 
 typedef struct s_object_3D t_object_3D ;
 typedef t_object_3D* p_object_3D ;
 
 typedef struct s_position_3D t_position_3D ;
 typedef t_position_3D* p_position_3D ;
+
+typedef struct s_dimension_3D t_dimension_3D ;
+typedef t_dimension_3D* p_dimension_3D ;
 
 typedef void *(*p_display_object_3D_method) (void *) ;
 
@@ -32,10 +43,34 @@ struct s_position_3D {
   int z ;
 } ;
 
+struct s_dimension_3D {
+  int width ;
+  int height ;
+  int depth ;
+  int radius ;
+  int second_radius ;
+} ;
+
 struct s_object_3D {
   p_tree tree ;
   p_display_object_3D_method display ;
   t_position_3D position ;
+  t_dimension_3D dimensions ;
+  char type ;
+} ;
+
+struct s_building_3D {
+  p_chained_list objects ;
+  char type ;
+} ;
+
+struct s_obstacle_3D {
+  p_chained_list objects ;
+  char type ;
+} ;
+
+struct s_bonus_3D {
+  p_chained_list objects ;
   char type ;
 } ;
 
@@ -51,6 +86,9 @@ void *display_cylinder (p_object_3D cylinder) ;
 void *display_cone (p_object_3D cone) ;
 void *display_sphere (p_object_3D sphere) ;
 void *display_cube (p_object_3D cube) ;
+void display_building (p_building_3D building) ;
+void display_obstacle (p_obstacle_3D obstacle) ;
+void display_bonus (p_bonus_3D bonus) ;
 void display_background (void) ;
 void display_road (void) ;
 void display_buildings (void) ;
