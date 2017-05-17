@@ -78,25 +78,12 @@
 
 
 int main (int argc, char *argv[]) {
-  int window_id ;
 
-  glutInit (&argc, argv) ;
-  glutInitWindowSize (800, 600) ;
-  glutInitWindowPosition (50, 50) ;
-  glutInitDisplayMode(GLUT_RGBA | GLUT_SINGLE | GLUT_DEPTH) ;
-  window_id = glutCreateWindow ("Drug! Drug! Drug! Drug!") ;
-  glEnable(GL_DEPTH_TEST) ;
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-  glutSetWindow (window_id) ;
-
-  
-
-  glutMouseFunc (handle_mouse) ;
-  glutKeyboardFunc (handle_keyboard);
-
-  glutMainLoop ();
-
+  generate_default_context () ;
+  parse_arguments (argc, argv) ;
+  initialize_opengl () ;
+  generate_game () ;
+  play_game () ;
 
   return 0 ;
 }
