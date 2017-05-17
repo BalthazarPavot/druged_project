@@ -5,6 +5,7 @@
 
 #include "GL/gl.h"
 #include "GL/glut.h"
+#include "ktree.h"
 
 #define SPHERE    0x01
 #define CYLINDRE  0x02
@@ -21,7 +22,7 @@ typedef t_object_3D* p_object_3D ;
 typedef struct s_position_3D t_position_3D ;
 typedef t_position_3D* p_position_3D ;
 
-typedef void *(*t_display_object_3D_method) (void *) ;
+typedef void *(*p_display_object_3D_method) (void *) ;
 
 
 struct s_position_3D {
@@ -31,8 +32,8 @@ struct s_position_3D {
 } ;
 
 struct s_object_3D {
-  k_tree *tree ;
-  t_display_object_3D_method display ;
+  p_tree tree ;
+  p_display_object_3D_method display ;
   t_position_3D position ;
   char type ;
 } ;
