@@ -15,7 +15,7 @@ BINDIR		=		bin
 TARGET		=		main
 
 SRCDIR		=		src
-SRCS			=		$(addsuffix .c, event_handler)
+SRCS			=		$(addsuffix .c, display event_handler game)
 
 OBJS			=		$(SRCS:.c=.o)
 GCH				=		$(SRCS:.c=.gch)
