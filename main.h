@@ -7,5 +7,6 @@
 #include "GL/glut.h"
 
 #include "src/event_handler.h"
+#include "src/ktree.h"
 
 #endif
