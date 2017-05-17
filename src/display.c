@@ -64,19 +64,25 @@ void *display_cube (p_object_3D cube) {
   _display_cube () ;
   return cube ;
 }
-
+float y = 10.0f ;
 void display_background (void) {
-  glColor3f(0.039f, 0.341f, 0.078f);
-  glNormal3f(1.0f, 1.0f, 1.0f);
+  glColor3f(91./255, 40./255, 0.0f);
   glBegin(GL_QUADS);
-  glVertex3f(-1500.0f, -8.0f, -1500.0f);
-  glVertex3f(-1500.0f, -8.0f,  1500.0f);
-  glVertex3f( 1500.0f, -8.0f,  1500.0f);
-  glVertex3f( 1500.0f, -8.0f, -1500.0f);
+  glVertex3f(-50.0f, 1500.0f,  -1.1f);
+  glVertex3f(50.0f, 1500.0f,  -1.1f);
+  glVertex3f(50.0f, -10.0f, -1.1f);
+  glVertex3f(-50.0f, -10.0f, -1.1f);
   glEnd();
 }
 
 void display_road (void) {
+  glColor3f(145./255, 63./255, 0.0f);
+  glBegin(GL_QUADS);
+  glVertex3f(-20.0f, y,  0.0f);
+  glVertex3f(20.0f, y,  0.0f);
+  glVertex3f(20.0f, -10.0f, 0.0f);
+  glVertex3f(-20.0f, -10.0f, 0.0f);
+  glEnd();
 }
 
 void display_building (p_building_3D building) {
@@ -121,15 +127,80 @@ void display_all_bonus (void) {
 void display_character (void) {
 }
 
+
+void display_axes () {
+
+  glBegin(GL_LINES);
+
+  glColor3f (0.9, 0, 0) ;
+  glVertex3f(0.0, 0.0, 1.0);
+  glVertex3f(500, 0, 1);
+
+  glColor3f (0, 0.9, 0) ;
+  glVertex3f(0.0, 0.0, 1.0);
+  glVertex3f(0, 500, 1);
+
+  //glColor3f (0, 0, 0.9) ;
+  //glVertex3f(0.0, 0.0, 0.0);
+  //glVertex3f(0, 0, 50);
+
+  glEnd();
+
+}
+
 void display_screen (void) {
+
+  glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
+  glMatrixMode (GL_PROJECTION) ;
+
   display_background () ;
   display_road () ;
   display_buildings () ;
   display_obstacles () ;
   display_all_bonus () ;
   display_character () ;
+
+  glBegin (GL_QUADS) ;
+
+/*
+  // top face
+  glColor3f(0.9, 0.9, 0.9) ;
+  glVertex3f(0, 0, 2) ;
+  glVertex3f(2, 0, 2) ;
+  glVertex3f(2, 0, 0) ;
+  glVertex3f(0, 0, 0) ;
+
+  // front right face
+  glColor3f(0.8, 0.8, 0.8) ;
+  glVertex3f(0, 0, 2) ;
+  glVertex3f(2, 0, 2) ;
+  glVertex3f(2, 2, 2) ;
+  glVertex3f(0, 2, 2) ;
+
+  // front left face
+  glColor3f(0.4, 0.4, 0.4) ;
+  glVertex3f(0, 0, 0) ;
+  glVertex3f(0, 0, 2) ; // ok
+  glVertex3f(0, 2, 2) ; // ok
+  glVertex3f(0, 2, 0) ; // ok
+
+  // botton face
+  glColor3f(0.5, 0.5, 0.5) ;
+  glVertex3f(-2000, -2000, 0) ;
+  glVertex3f(2000, -20000, 0) ;
+  glVertex3f(2000, 2000, 0) ;
+  glVertex3f(-2000, 2000, 0) ;
+  * */
+
+  glEnd () ;
+
+  display_axes() ;
+
+  glutSwapBuffers () ;
 }
 
 void animation (void) {
+  sleep (0.5) ;
   glutPostRedisplay () ;
+  y+=0.1 ;
 }

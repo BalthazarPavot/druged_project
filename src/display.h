@@ -3,10 +3,14 @@
 #define _DISPLAY_H
 
 
+#include <unistd.h>
+#include <math.h>
+
 #include "GL/gl.h"
 #include "GL/glut.h"
 #include "ktree.h"
 #include "chained_list.h"
+
 
 #define SPHERE    0x01
 #define CYLINDRE  0x02
