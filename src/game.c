@@ -13,6 +13,7 @@ void generate_default_context () {
   context.parameters.building_velocity = 0.3 ;
   context.parameters.obstacle_velocity = 0.25 ;
   context.parameters.road_length = 1000 ;
+  context.game_state.road_begin_animation_y = -52.5 ;
 }
 
 void initialize_opengl () {
@@ -22,6 +23,7 @@ void initialize_opengl () {
   glutInitDisplayMode (GLUT_RGBA | GLUT_SINGLE | GLUT_DEPTH) ;
   context.window_id = glutCreateWindow (TITLE) ;
   glEnable (GL_DEPTH_TEST) ;
+  glClearColor(91./255, 40./255, 225.0f/255, 1.0f);
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -42,11 +44,14 @@ void play_game () {
 
   glutMouseFunc (handle_mouse) ;
   glutKeyboardFunc (handle_keyboard);
+  glutSpecialFunc (handle_special) ;
 
   glutSetWindow (context.window_id) ;
 
-  glFrustum (-2, 2, -2, 2, 2, 200) ;
-  gluLookAt (0, -50, 60, 0, 0, 0, 0, 0, 1) ;
+  glFrustum (-2, 2, -2, 2, 2, 1500) ;
+  gluLookAt (0, -60, 40, 0, 0, 0, 0, 0, 1) ;
+
+  context.quadObj = gluNewQuadric();
 
   glutMainLoop ();
   
@@ -72,6 +77,8 @@ void destroyContext () {
   }
   free_chained_list (context.bonus) ;
   context.bonus = NULL ;
+  if (context.quadObj != NULL)
+    gluDeleteQuadric(context.quadObj);
 }
 
 void exit_game () {

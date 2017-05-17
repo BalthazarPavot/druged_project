@@ -3,7 +3,10 @@
 #include "display.h"
 
 
-static void _display_cylinder () {
+
+static void _display_cylinder (float base, float top, float height, float slices, float stacks) {
+  gluCylinder (context.quadObj, base, top, height, slices, stacks);
+
   /*
   GLUquadricObj *quadObj = gluNewQuadric();
   gluCylinder(quadObj, base, top, height, slices, stacks);
@@ -21,7 +24,7 @@ static void _display_cylinder () {
     glVertex3f(0.0, halfLength, 0.0);
   *vertices at edges of circle*
     glVertex3f(radius*cos(theta), halfLength, radius*sin(theta));
-                                              glVertex3f (radius*cos(nextTheta), halfLength, radius*sin(nextTheta));
+    glVertex3f (radius*cos(nextTheta), halfLength, radius*sin(nextTheta));
   * the same vertices at the bottom of the cylinder*
     glVertex3f (radius*cos(nextTheta), -halfLength, radius*sin(nextTheta));
     glVertex3f(radius*cos(theta), -halfLength, radius*sin(theta));
@@ -31,6 +34,10 @@ static void _display_cylinder () {
   */
 }
 
+static void _display_default_cylinder (float base, float top, float height) {
+  _display_cylinder (base, top, height, height*2, 16) ;
+}
+
 static void _display_sphere () {
   /*
   GLUquadricObj *quadObj = gluNewQuadric();
@@ -38,20 +45,119 @@ static void _display_sphere () {
   */
 }
 
-static void _display_cube () {
-  /*
-  GLUquadricObj *quadObj = gluNewQuadric();
-  gluCylinder(quadObj, base, top, height, slices, stacks);
-  */
+static void _display_cube (float x, float y, float z, float dx, float dy, float dz) {
+  float currentColor[4];
+  glGetFloatv (GL_CURRENT_COLOR, currentColor);
+  glBegin(GL_QUADS);
+  dz = -dz ;
+
+  /* up OK */
+  glVertex3f(x, y, z);
+  glVertex3f(x+dx, y, z);
+  glVertex3f(x+dx, y+dy, z);
+  glVertex3f(x, y+dy, z); 
+
+  glColor3f(currentColor[0]*0.9, currentColor[1]*0.9, currentColor[2]*0.9);
+  /* front OK */
+  glVertex3f(x, y, z);
+  glVertex3f(x+dx, y, z);
+  glVertex3f(x+dx, y, z+dz);
+  glVertex3f(x, y, z+dz);
+
+  glColor3f(currentColor[0]*0.8, currentColor[1]*0.8, currentColor[2]*0.8);
+  /* right */
+  glVertex3f(x+dx, y, z);
+  glVertex3f(x+dx, y+dy, z);
+  glVertex3f(x+dx, y+dy, z+dz);
+  glVertex3f(x+dx, y, z+dz);
+
+  glColor3f(currentColor[0]*0.95, currentColor[1]*0.95, currentColor[2]*0.95);
+  /* left */
+  glVertex3f(x, y, z);
+  glVertex3f(x, y+dy, z);
+  glVertex3f(x, y+dy, z+dz);
+  glVertex3f(x, y, z+dz);
+
+  glColor3f(currentColor[0]*0.5, currentColor[1]*0.5, currentColor[2]*0.5);
+  /* back */
+  glVertex3f(x, y+dy, z);
+  glVertex3f(x+dx, y+dy, z);
+  glVertex3f(x+dx, y+dy, z+dz);
+  glVertex3f(x, y+dy, z+dz);
+
+  glColor3f(currentColor[0]*0.3, currentColor[1]*0.3, currentColor[2]*0.3);
+  /* bottom */
+  glVertex3f(x, y, z+dz);
+  glVertex3f(x+dx, y, z+dz);
+  glVertex3f(x+dx, y+dy, z+dz);
+  glVertex3f(x, y+dy, z+dz);
+
+  glEnd();
+  glColor3f(currentColor[0], currentColor[1], currentColor[2]);
+}
+
+static void _display_real_cube (float x, float y, float z, float w) {
+  _display_cube (x, y, z, w, w, w) ;
+}
+
+static void _display_vehicle () {
+  glColor3f(170./255, 97./255, 41./255);
+  
+  /* bottom */
+  _display_cube (
+    VEHICLE_POS_X, VEHICLE_POS_Y, VEHICLE_POS_Z,
+    VEHICLE_WIDTH, VEHICLE_LENGTH, VEHICLE_THICKNESS
+  ) ;
+  /* left */
+  _display_cube (
+    VEHICLE_POS_X, VEHICLE_POS_Y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_THICKNESS, VEHICLE_LENGTH-VEHICLE_THICKNESS*2, VEHICLE_HEIGHT-VEHICLE_THICKNESS
+  ) ;
+  /* right */
+  _display_cube (
+    VEHICLE_POS_X+VEHICLE_WIDTH-VEHICLE_THICKNESS, VEHICLE_POS_Y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_THICKNESS, VEHICLE_LENGTH-VEHICLE_THICKNESS*2, VEHICLE_HEIGHT-VEHICLE_THICKNESS
+  ) ;
+  /* front */
+  _display_cube (
+    VEHICLE_POS_X, VEHICLE_POS_Y+VEHICLE_LENGTH-VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_WIDTH, VEHICLE_THICKNESS, VEHICLE_HEIGHT-VEHICLE_THICKNESS
+  ) ;
+  /* back */
+  _display_cube (
+    VEHICLE_POS_X, VEHICLE_POS_Y, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_WIDTH, VEHICLE_THICKNESS, VEHICLE_HEIGHT-VEHICLE_THICKNESS
+  ) ;
+}
+
+static void _display_character_into_vehicle () {
+  glPushMatrix (); //remember current matrix
+  glTranslatef (VEHICLE_POS_X+VEHICLE_WIDTH/2,
+    VEHICLE_POS_Y+VEHICLE_LENGTH/2, 10);
+  glColor3f(1.0f, 1.0f, 1.0f);
+  _display_default_cylinder (3, 0, 15) ;
+  glPopMatrix (); //restore matrix
+}
+
+static void _display_character_on_left () {
+  
+}
+
+static void _display_character_on_right () {
+  
+}
+
+static void _display_character_hands_up () {
+  
 }
 
 void *display_cylinder (p_object_3D cylinder) {
-  _display_cylinder () ;
+  _display_cylinder (0, 0, 0, 0, 0) ;
   return cylinder ;
 }
 
 void *display_cone (p_object_3D cone) {
-  _display_cylinder () ;
+  _display_cylinder (0, 0, 0, 0, 0) ;
   return cone ;
 }
 
@@ -61,27 +167,27 @@ void *display_sphere (p_object_3D sphere) {
 }
 
 void *display_cube (p_object_3D cube) {
-  _display_cube () ;
+  _display_real_cube (0, 0, 0, 0) ;
   return cube ;
 }
-float y = 10.0f ;
+
 void display_background (void) {
   glColor3f(91./255, 40./255, 0.0f);
   glBegin(GL_QUADS);
-  glVertex3f(-50.0f, 1500.0f,  -1.1f);
-  glVertex3f(50.0f, 1500.0f,  -1.1f);
-  glVertex3f(50.0f, -10.0f, -1.1f);
-  glVertex3f(-50.0f, -10.0f, -1.1f);
+  glVertex3f(-context.game_state.bg_begin_animation_x, context.game_state.bg_begin_animation_y,  -0.1f);
+  glVertex3f(context.game_state.bg_begin_animation_x, context.game_state.bg_begin_animation_y,  -0.1f);
+  glVertex3f(50.0f, ROAD_BEGINNING_Y, -0.1f);
+  glVertex3f(-50.0f, ROAD_BEGINNING_Y, -0.1f);
   glEnd();
 }
 
 void display_road (void) {
   glColor3f(145./255, 63./255, 0.0f);
   glBegin(GL_QUADS);
-  glVertex3f(-20.0f, y,  0.0f);
-  glVertex3f(20.0f, y,  0.0f);
-  glVertex3f(20.0f, -10.0f, 0.0f);
-  glVertex3f(-20.0f, -10.0f, 0.0f);
+  glVertex3f(-ROAD_MID_SPAN, context.game_state.road_begin_animation_y,  0.0f);
+  glVertex3f(ROAD_MID_SPAN, context.game_state.road_begin_animation_y,  0.0f);
+  glVertex3f(ROAD_MID_SPAN, ROAD_BEGINNING_Y, 0.0f);
+  glVertex3f(-ROAD_MID_SPAN, ROAD_BEGINNING_Y, 0.0f);
   glEnd();
 }
 
@@ -125,33 +231,21 @@ void display_all_bonus (void) {
 }
 
 void display_character (void) {
-}
-
-
-void display_axes () {
-
-  glBegin(GL_LINES);
-
-  glColor3f (0.9, 0, 0) ;
-  glVertex3f(0.0, 0.0, 1.0);
-  glVertex3f(500, 0, 1);
-
-  glColor3f (0, 0.9, 0) ;
-  glVertex3f(0.0, 0.0, 1.0);
-  glVertex3f(0, 500, 1);
-
-  //glColor3f (0, 0, 0.9) ;
-  //glVertex3f(0.0, 0.0, 0.0);
-  //glVertex3f(0, 0, 50);
-
-  glEnd();
-
+  _display_vehicle () ;
+  if (context.player.arms_position == ARMS_INTO_VEHICLE) 
+    _display_character_into_vehicle () ;
+  else if (context.player.arms_position == ARMS_ON_RIGHT) 
+    _display_character_on_right () ;
+  else if (context.player.arms_position == ARMS_ON_LEFT) 
+    _display_character_on_left () ;
+  else if (context.player.arms_position == PUT_YOUR_HANDS_UP) 
+    _display_character_hands_up () ;
 }
 
 void display_screen (void) {
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
-  glMatrixMode (GL_PROJECTION) ;
+  glMatrixMode (GL_MODELVIEW) ;
 
   display_background () ;
   display_road () ;
@@ -160,47 +254,27 @@ void display_screen (void) {
   display_all_bonus () ;
   display_character () ;
 
-  glBegin (GL_QUADS) ;
-
-/*
-  // top face
-  glColor3f(0.9, 0.9, 0.9) ;
-  glVertex3f(0, 0, 2) ;
-  glVertex3f(2, 0, 2) ;
-  glVertex3f(2, 0, 0) ;
-  glVertex3f(0, 0, 0) ;
-
-  // front right face
-  glColor3f(0.8, 0.8, 0.8) ;
-  glVertex3f(0, 0, 2) ;
-  glVertex3f(2, 0, 2) ;
-  glVertex3f(2, 2, 2) ;
-  glVertex3f(0, 2, 2) ;
-
-  // front left face
-  glColor3f(0.4, 0.4, 0.4) ;
-  glVertex3f(0, 0, 0) ;
-  glVertex3f(0, 0, 2) ; // ok
-  glVertex3f(0, 2, 2) ; // ok
-  glVertex3f(0, 2, 0) ; // ok
-
-  // botton face
-  glColor3f(0.5, 0.5, 0.5) ;
-  glVertex3f(-2000, -2000, 0) ;
-  glVertex3f(2000, -20000, 0) ;
-  glVertex3f(2000, 2000, 0) ;
-  glVertex3f(-2000, 2000, 0) ;
-  * */
-
-  glEnd () ;
-
-  display_axes() ;
-
   glutSwapBuffers () ;
 }
 
 void animation (void) {
+  if (!context.game_state.vrooming) {
+    context.game_state.road_begin_animation_y += 0.5 ;
+    context.game_state.bg_begin_animation_x += 0.5 ;
+    context.game_state.bg_begin_animation_y += 0.5 ;
+    if (context.game_state.bg_begin_animation_x >= 1500) {
+      context.game_state.vrooming = 1 ;
+    }
+  }
+  if (context.key_down.rotate_left)
+    glRotatef(-0.1, 0, 1, VEHICLE_POS_Z);
+  else if (context.key_down.rotate_right)
+    glRotatef(0.1, 0, 1, VEHICLE_POS_Z);
+  if (context.key_down.rotate_up) {
+    glRotatef(-0.1, 1, 0, 0);
+  } else if (context.key_down.rotate_down) {
+    glRotatef(0.1, 1, 0, 0);
+  }
   sleep (0.5) ;
   glutPostRedisplay () ;
-  y+=0.1 ;
 }

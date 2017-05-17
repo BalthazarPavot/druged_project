@@ -17,6 +17,29 @@
 #define CUBE      0x03
 #define CONE      0x04
 
+#define ROAD_SPAN 60
+#define ROAD_MID_SPAN ROAD_SPAN / 2
+
+#define WHEEl_RAY 1
+#define WHEEl_HEIGHT WHEEL_RAY * 2
+
+#define VEHICLE_WIDTH ROAD_SPAN / 6
+#define VEHICLE_LENGTH ROAD_SPAN / 4
+#define VEHICLE_HEIGHT 10
+
+#define VEHICLE_POS_X -VEHICLE_WIDTH/2
+#define VEHICLE_POS_Y -30
+#define VEHICLE_POS_Z VEHICLE_HEIGHT+WHEEl_RAY
+
+#define VEHICLE_THICKNESS 1.5
+
+#define ARMS_INTO_VEHICLE 0
+#define ARMS_ON_RIGHT 1
+#define ARMS_ON_LEFT 2
+#define PUT_YOUR_HANDS_UP 3
+
+#define ROAD_BEGINNING_Y -100.0f
+
 typedef struct s_player_object_3D t_player_object_3D ;
 typedef t_player_object_3D* p_player_object_3D ;
 
