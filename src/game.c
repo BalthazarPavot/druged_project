@@ -17,6 +17,7 @@ void generate_default_context () {
   context.parameters.obstacle_frequency = 0.25 ;
   context.parameters.road_length = 1000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
+  context.player.speed = 0.1 ;
 }
 
 void initialize_opengl () {
@@ -54,28 +55,29 @@ void generate_game () {
 void generate_buildings (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
-      distance += add_new_building () ;
+      distance += add_new_building (distance) ;
 }
 
-int add_new_building () {
+int add_new_building (int distance) {
   t_building_3D building ;
 
-  init_building_3D (&building) ;
+  init_random_building_3D (&building) ;
+  set_random_building_3D_position (&building, -1, distance, -1) ;
   push_chained_list (context.buildings, &building, sizeof (t_building_3D)) ;
-  building.dimensions.depth = 50 ;
   return building.dimensions.depth ;
 }
 
 void generate_obstacles (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
-      distance += add_new_obstacle () ;
+      distance += add_new_obstacle (distance) ;
 }
 
-int add_new_obstacle () {
+int add_new_obstacle (int distance) {
   t_obstacle_3D obstacle ;
 
-  init_obstacle_3D (&obstacle) ;
+  init_random_obstacle_3D (&obstacle) ;
+  set_random_obstacle_3D_position (&obstacle, -1, distance, -1) ;
   push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
   obstacle.dimensions.depth = 10 ;
   return obstacle.dimensions.depth ;
@@ -84,13 +86,14 @@ int add_new_obstacle () {
 void generate_bonus (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
-      distance += add_new_bonus () ;
+      distance += add_new_bonus (distance) ;
 }
 
-int add_new_bonus () {
+int add_new_bonus (int distance) {
   t_bonus_3D bonus ;
 
-  init_bonus_3D (&bonus) ;
+  init_random_bonus_3D (&bonus) ;
+  set_random_bonus_3D_position (&bonus, -1, distance, -1) ;
   push_chained_list (context.bonus, &bonus, sizeof (t_bonus_3D)) ;
   bonus.dimensions.depth = 10 ;
   return bonus.dimensions.depth ;
