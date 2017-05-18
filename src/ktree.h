@@ -20,8 +20,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "display.h"
-
 
 typedef struct s_tree t_tree ;
 typedef t_tree* p_tree ;
@@ -29,6 +27,8 @@ typedef t_tree* p_tree ;
 struct s_tree {
         p_tree *sub_tree ;
 } ;
+
+#include "objects_3D.h"
 
 p_tree new_tree () ;
 void free_tree (p_tree tree) ;
