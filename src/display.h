@@ -17,6 +17,7 @@
 #define CYLINDRE  0x02
 #define CUBE      0x03
 #define CONE      0x04
+#define TILE      0x05
 
 #define ARMS_INTO_VEHICLE 0
 #define ARMS_ON_RIGHT 1
@@ -32,6 +33,7 @@ void *display_cube (p_object_3D cube) ;
 void display_building (p_building_3D building) ;
 void display_obstacle (p_obstacle_3D obstacle) ;
 void display_bonus (p_bonus_3D bonus) ;
+void *display_tile (p_object_3D tile) ;
 void display_background (void) ;
 void display_road (void) ;
 void display_buildings (void) ;

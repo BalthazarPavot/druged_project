@@ -15,7 +15,7 @@ void generate_default_context () {
   context.parameters.bonus_frequency = 0.35 ;
   context.parameters.building_frequency = 0.3 ;
   context.parameters.obstacle_frequency = 0.25 ;
-  context.parameters.road_length = 1000 ;
+  context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
   context.player.speed = 0.1 ;
 }
@@ -37,7 +37,7 @@ void parse_arguments (int argc, char *argv[]) {
   if (argc > 1)
     context.parameters.road_length = atoi (argv[1]) ;
   else
-    context.parameters.road_length = 1500 ;
+    context.parameters.road_length = 50000 ;
 }
 
 void generate_game () {
@@ -55,7 +55,7 @@ void generate_game () {
 void generate_buildings (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
-      distance += add_new_building (distance) ;
+      distance += add_new_building (distance) + BUILDING_STEP_DIMENSION * 2 ;
 }
 
 int add_new_building (int distance) {
@@ -63,6 +63,7 @@ int add_new_building (int distance) {
 
   init_random_building_3D (&building) ;
   set_random_building_3D_position (&building, -1, distance, -1) ;
+  generate_details (&building) ;
   push_chained_list (context.buildings, &building, sizeof (t_building_3D)) ;
   return building.dimensions.depth ;
 }
