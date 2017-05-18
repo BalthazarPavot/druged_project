@@ -6,26 +6,16 @@
 void handle_keyboard (unsigned char key, int x, int y) {
   switch (key) {
     case '8':
-      context.key_down.rotate_down = 0 ;
-      context.key_down.rotate_up = 1 ;
-      break ;
-    case '5':
-      context.key_down.rotate_down = 0 ;
-      context.key_down.rotate_up = 0 ;
-      context.key_down.rotate_right = 0 ;
-      context.key_down.rotate_left = 0 ;
+      glRotatef(-0.1, 1, 0, 0);
       break ;
     case '2':
-      context.key_down.rotate_down = 1 ;
-      context.key_down.rotate_up = 0 ;
+      glRotatef(0.1, 1, 0, 0);
       break ;
     case '4':
-      context.key_down.rotate_right = 0 ;
-      context.key_down.rotate_left = 1 ;
+      glRotatef(-0.1, 0, 1, VEHICLE_POS_Z);
       break ;
     case '6':
-      context.key_down.rotate_right = 1 ;
-      context.key_down.rotate_left = 0 ;
+      glRotatef(0.1, 0, 1, VEHICLE_POS_Z);
       break ;
     case 'w':
     case 'z':
@@ -54,8 +44,16 @@ void handle_keyboard (unsigned char key, int x, int y) {
 void handle_special (int key, int x, int y) {
   switch (key) {
     case GLUT_KEY_RIGHT:
+      context.player.arms_position = ARMS_ON_RIGHT ;
       break ;
     case GLUT_KEY_LEFT:
+      context.player.arms_position = ARMS_ON_LEFT ;
+      break ;
+    case GLUT_KEY_UP:
+      context.player.arms_position = PUT_YOUR_HANDS_UP ;
+      break ;
+    case GLUT_KEY_DOWN:
+      context.player.arms_position = ARMS_INTO_VEHICLE ;
       break ;
     default:
       printf ("Unknown key: %c\n", key) ;
