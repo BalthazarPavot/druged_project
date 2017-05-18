@@ -259,21 +259,16 @@ void display_screen (void) {
 
 void animation (void) {
   if (!context.game_state.vrooming) {
-    context.game_state.road_begin_animation_y += 0.5 ;
-    context.game_state.bg_begin_animation_x += 0.5 ;
-    context.game_state.bg_begin_animation_y += 0.5 ;
-    if (context.game_state.bg_begin_animation_x >= 1500) {
-      context.game_state.vrooming = 1 ;
+    context.game_state.road_begin_animation_y += 0.5 * context.parameters.road_length / 1500. ;
+    context.game_state.bg_begin_animation_x += 0.5 * context.parameters.road_length / 1500. ;
+    context.game_state.bg_begin_animation_y += 0.5 * context.parameters.road_length / 1500. ;
+    if (context.game_state.bg_begin_animation_x >= context.parameters.road_length) {
+      context.game_state.vrooming = 100 ;
+      printf ("Gooo!\n") ;
     }
-  }
-  if (context.key_down.rotate_left)
-    glRotatef(-0.1, 0, 1, VEHICLE_POS_Z);
-  else if (context.key_down.rotate_right)
-    glRotatef(0.1, 0, 1, VEHICLE_POS_Z);
-  if (context.key_down.rotate_up) {
-    glRotatef(-0.1, 1, 0, 0);
-  } else if (context.key_down.rotate_down) {
-    glRotatef(0.1, 1, 0, 0);
+  } else {
+    context.player.position += 0.1 ;
+    glTranslatef(0.0f, -0.1f , 0.0f);
   }
   sleep (0.5) ;
   glutPostRedisplay () ;

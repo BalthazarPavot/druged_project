@@ -30,6 +30,10 @@ void initialize_opengl () {
 void parse_arguments (int argc, char *argv[]) {
   context.argc = argc ;
   context.argv = argv ;
+  if (argc > 1)
+    context.parameters.road_length = atoi (argv[1]) ;
+  else
+    context.parameters.road_length = 1500 ;
 }
 
 void generate_game () {
@@ -48,7 +52,7 @@ void play_game () {
 
   glutSetWindow (context.window_id) ;
 
-  glFrustum (-2, 2, -2, 2, 2, 1500) ;
+  glFrustum (-2, 2, -2, 2, 2, context.parameters.road_length) ;
   gluLookAt (0, -60, 40, 0, 0, 0, 0, 0, 1) ;
 
   context.quadObj = gluNewQuadric();
