@@ -300,22 +300,28 @@ void display_road (void) {
 }
 
 void display_building (p_building_3D building) {
+  if (building->position.x  - context.player.position > 1000)
+    return ;
   for_chained_list_value_of_type (building->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 100)
+    if (value->position.x - context.player.position > 1000)
       return ;
   }
 }
 
 void display_obstacle (p_obstacle_3D obstacle) {
+  if (obstacle->position.x  - context.player.position > 1000)
+    return ;
   for_chained_list_value_of_type (obstacle->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 100)
+    if (value->position.x - context.player.position > 1000)
       return ;
   }
 }
 
 void display_bonus (p_bonus_3D bonus) {
+  if (bonus->position.x  - context.player.position > 1000)
+    return ;
   for_chained_list_value_of_type (bonus->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 100)
+    if (value->position.x - context.player.position > 1000)
       return ;
   }
 }
@@ -381,9 +387,9 @@ void display_screen (void) {
 
 void animation (void) {
   if (!context.game_state.vrooming) {
-    context.game_state.road_begin_animation_y += 0.5 * context.parameters.road_length / 1500. ;
-    context.game_state.bg_begin_animation_x += 0.5 * context.parameters.road_length / 1500. ;
-    context.game_state.bg_begin_animation_y += 0.5 * context.parameters.road_length / 1500. ;
+    context.game_state.road_begin_animation_y += context.parameters.road_length / 1500. ;
+    context.game_state.bg_begin_animation_x += context.parameters.road_length / 1500. ;
+    context.game_state.bg_begin_animation_y += context.parameters.road_length / 1500. ;
     if (context.game_state.bg_begin_animation_x >= context.parameters.road_length)
       context.game_state.vrooming = 1000 ;
   } else {
