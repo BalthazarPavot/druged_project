@@ -1,5 +1,6 @@
-#ifndef ktree_h
-#define ktree_h
+
+#ifndef _KTREE_H
+#define _KTREE_H
 
 #define FULL ((void*)1)
 #define EMPTY NULL
@@ -19,6 +20,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include "display.h"
+
+
 typedef struct s_tree t_tree ;
 typedef t_tree* p_tree ;
 
@@ -28,7 +32,8 @@ struct s_tree {
 
 p_tree new_tree () ;
 void free_tree (p_tree tree) ;
-p_tree ball_to_tree_bis (int diameter, int depth, p_tree tree, s_position_3D center) ;
-p_tree ball_to_tree (int diameter, s_position_3D center) ;
+p_tree ball_to_tree_bis (t_object_3D sphere, t_position_3D v1, t_position_3D v2, int depth) ;
+p_tree ball_to_tree (t_object_3D sphere) ;
+
 
 #endif
