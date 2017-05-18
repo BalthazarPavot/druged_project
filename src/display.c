@@ -35,7 +35,7 @@ static void _display_cylinder (float base, float top, float height, float slices
 }
 
 static void _display_default_cylinder (float base, float top, float height) {
-  _display_cylinder (base, top, height, height*2, 16) ;
+  _display_cylinder (base, top, height, 16, 16) ;
 }
 
 static void _display_sphere (float radius, float slices, float stacks) {
@@ -129,6 +129,61 @@ static void _display_vehicle () {
     VEHICLE_POS_X, y, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
     VEHICLE_WIDTH, VEHICLE_THICKNESS, VEHICLE_HEIGHT-VEHICLE_THICKNESS
   ) ;
+
+  glPushMatrix () ;
+
+  /* left wheel */
+  glTranslatef (VEHICLE_POS_X-VEHICLE_THICKNESS-0.2, y+WHEEl_RAY/2, WHEEl_RAY) ;
+  glRotatef ( 80, 0, 1, 0) ;
+  _display_default_cylinder (WHEEl_RAY, WHEEl_RAY, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.95, 97./255*0.95, 41./255*0.95);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glTranslatef (0, 0, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.8, 97./255*0.8, 41./255*0.8);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glRotatef (-80, 0, 1, 0) ;
+
+  glColor3f(170./255, 97./255, 41./255);
+  /* right wheel */
+  glTranslatef (VEHICLE_WIDTH+0.4, 0, 0) ;
+  glRotatef ( 100, 0, 1, 0) ;
+  _display_default_cylinder (WHEEl_RAY, WHEEl_RAY, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.95, 97./255*0.95, 41./255*0.95);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glTranslatef (0, 0, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.8, 97./255*0.8, 41./255*0.8);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glRotatef (-100, 0, 1, 0) ;
+
+  glPopMatrix () ;
+
+  glPushMatrix () ;
+
+  glColor3f(170./255, 97./255, 41./255);
+  /* left wheel */
+  glTranslatef (VEHICLE_POS_X-VEHICLE_THICKNESS-0.2, y-WHEEl_RAY/2+VEHICLE_LENGTH, WHEEl_RAY) ;
+  glRotatef ( 80, 0, 1, 0) ;
+  _display_default_cylinder (WHEEl_RAY, WHEEl_RAY, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.95, 97./255*0.95, 41./255*0.95);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glTranslatef (0, 0, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.8, 97./255*0.8, 41./255*0.8);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glRotatef (-80, 0, 1, 0) ;
+
+  glColor3f(170./255, 97./255, 41./255);
+  /* right wheel */
+  glTranslatef (VEHICLE_WIDTH+0.4, 0, 0) ;
+  glRotatef ( 100, 0, 1, 0) ;
+  _display_default_cylinder (WHEEl_RAY, WHEEl_RAY, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.95, 97./255*0.95, 41./255*0.95);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glTranslatef (0, 0, VEHICLE_THICKNESS) ;
+  glColor3f(170./255*0.8, 97./255*0.8, 41./255*0.8);
+  gluDisk (context.quadObj, 0, WHEEl_RAY, 16, 16) ;
+  glRotatef (-100, 0, 1, 0) ;
+
+  glPopMatrix () ;
 }
 
 static void _display_character_into_vehicle () {
@@ -137,14 +192,14 @@ static void _display_character_into_vehicle () {
 
   /* body */
   glTranslatef (VEHICLE_POS_X + VEHICLE_WIDTH / 2,
-    context.player.position + VEHICLE_POS_Y + VEHICLE_LENGTH / 2, VEHICLE_POS_Z);
-  _display_default_cylinder (3, 0, 15) ;
+    context.player.position + VEHICLE_POS_Y + VEHICLE_LENGTH / 2, VEHICLE_POS_Z+4);
+  _display_default_cylinder (3, 0, 12) ;
 
   /* left arm */
-  glTranslatef (-4, 5, 11);
+  glTranslatef (-4, 5, 7);
   glRotatef ( 95, 1, 0, 0) ;
   glRotatef ( 40, 0, 1, 0) ;
-  _display_default_cylinder (1, 0, 8) ;
+  _display_default_cylinder (1, 0, 7) ;
   glRotatef (-40, 0, 1, 0) ;
   glRotatef (-95, 1, 0, 0) ;
 
@@ -152,7 +207,7 @@ static void _display_character_into_vehicle () {
   glTranslatef (8, 0, 0);
   glRotatef ( 95, 1, 0, 0) ;
   glRotatef (-40, 0, 1, 0) ;
-  _display_default_cylinder (1, 0, 8) ;
+  _display_default_cylinder (1, 0, 7) ;
   glRotatef ( 40, 0, 1, 0) ;
   glRotatef (-95, 1, 0, 0) ;
 
@@ -300,34 +355,36 @@ void display_road (void) {
 }
 
 void display_building (p_building_3D building) {
-  if (building->position.x  - context.player.position > 1000)
+  glColor3f(180./255, 90./255, 0.0f);
+  if (fabs (building->position.y - context.player.position) > 500)
     return ;
+  _display_real_cube (building->position.x, building->position.y, building->position.z, building->dimensions.depth) ;
   for_chained_list_value_of_type (building->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 1000)
+    if (value->position.y - context.player.position > 1000)
       return ;
   }
 }
 
 void display_obstacle (p_obstacle_3D obstacle) {
-  if (obstacle->position.x  - context.player.position > 1000)
+  if (fabs (obstacle->position.y - context.player.position) > 1000)
     return ;
   for_chained_list_value_of_type (obstacle->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 1000)
+    if (value->position.y - context.player.position > 1000)
       return ;
   }
 }
 
 void display_bonus (p_bonus_3D bonus) {
-  if (bonus->position.x  - context.player.position > 1000)
+  if (fabs (bonus->position.y - context.player.position) > 1000)
     return ;
   for_chained_list_value_of_type (bonus->objects, p_object_3D) {
-    if (value->position.x - context.player.position > 1000)
+    if (value->position.y - context.player.position > 1000)
       return ;
   }
 }
 
 void display_buildings (void) {
-  for_chained_list_value_of_type (context.buildings, p_building_3D) {
+  for_chained_list_value (context.buildings) {
     display_building (value) ;
   }
 }
@@ -393,9 +450,12 @@ void animation (void) {
     if (context.game_state.bg_begin_animation_x >= context.parameters.road_length)
       context.game_state.vrooming = 1000 ;
   } else {
-    context.player.position += 0.1 ;
-    glTranslatef(0.0f, -0.1f , 0.0f);
+    context.player.position += context.player.speed ;
+    glTranslatef(0.0f, -context.player.speed , 0.0f);
+    if (context.player.speed < 2 && (int )context.player.position % 50 == 0)
+      context.player.speed += 0.001 ;
+    if (context.player.position > context.parameters.road_length)
+      exit_game () ;
   }
-  sleep (0.5) ;
   glutPostRedisplay () ;
 }
