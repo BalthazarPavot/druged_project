@@ -224,7 +224,7 @@ static void _display_character_on_left () {
   /* body */
   glTranslatef (VEHICLE_POS_X + VEHICLE_WIDTH / 2,
     context.player.position + VEHICLE_POS_Y + VEHICLE_LENGTH / 2, VEHICLE_POS_Z+4);
-  glRotatef (-20, 0, 1, 0) ;
+  glRotatef (-30, 0, 1, 0) ;
   _display_default_cylinder (3, 0, 15) ;
   glRotatef ( 20, 0, 1, 0) ;
 
@@ -255,7 +255,7 @@ static void _display_character_on_right () {
   /* body */
   glTranslatef (VEHICLE_POS_X + VEHICLE_WIDTH / 2,
     context.player.position + VEHICLE_POS_Y + VEHICLE_LENGTH / 2, VEHICLE_POS_Z+4);
-  glRotatef ( 20, 0, 1, 0) ;
+  glRotatef ( 30, 0, 1, 0) ;
   _display_default_cylinder (3, 0, 15) ;
   glRotatef (-20, 0, 1, 0) ;
 
@@ -315,7 +315,20 @@ static void _display_character_hands_up () {
 }
 
 void *display_cylinder (p_object_3D cylinder) {
-  _display_cylinder (0, 0, 0, 0, 0) ;
+  glPushMatrix () ;
+  glTranslatef (cylinder->position.x, cylinder->position.y, cylinder->position.z) ;
+  if (cylinder->transform.angle_x)
+    glRotatef (cylinder->transform.angle_x, 1, 0, 0) ;
+  if (cylinder->transform.angle_y)
+    glRotatef (cylinder->transform.angle_y, 0, 1, 0) ;
+  if (cylinder->transform.angle_z)
+    glRotatef (cylinder->transform.angle_z, 0, 0, 1) ;
+  _display_default_cylinder (cylinder->dimensions.radius, cylinder->dimensions.radius,
+    cylinder->dimensions.height) ;
+  gluDisk (context.quadObj, 0, cylinder->dimensions.radius, 16, 16) ;
+  glTranslatef (0, 0, cylinder->dimensions.height);
+  gluDisk (context.quadObj, 0, cylinder->dimensions.radius, 16, 16) ;
+  glPopMatrix () ;
   return cylinder ;
 }
 
@@ -341,6 +354,14 @@ void *display_tile (p_object_3D tile) {
   _display_cube (tile->position.x, tile->position.y, tile->position.z,
     tile->dimensions.width, tile->dimensions.depth, tile->dimensions.height) ;
   return tile ;
+}
+
+void *display_text (p_object_3D text) {
+  if (text->color.r || text->color.g ||text->color.b) {
+    glColor3f(text->color.r/255.0, text->color.g/255.0, text->color.b/255.0);
+  }
+  print (text->position.x, text->position.y, text->position.z, (char*)text->tree) ;
+  return text ;
 }
 
 void display_background (void) {
@@ -376,10 +397,13 @@ void display_building (p_building_3D building) {
 }
 
 void display_obstacle (p_obstacle_3D obstacle) {
+  glColor3f(96./255, 96./255, 96/255.0f);
   if (fabs (obstacle->position.y - context.player.position) > 500)
     return ;
   for_chained_list_value (obstacle->objects) {
-    ((p_object_3D)value)->display (value) ;
+    if (((p_object_3D)value)->display) {
+      ((p_object_3D)value)->display (value) ;
+    }
   }
 }
 
@@ -387,7 +411,8 @@ void display_bonus (p_bonus_3D bonus) {
   if (fabs (bonus->position.y - context.player.position) > 500)
     return ;
   for_chained_list_value (bonus->objects) {
-    ((p_object_3D)value)->display (value) ;
+    if (((p_object_3D)value)->display)
+      ((p_object_3D)value)->display (value) ;
   }
 }
 
@@ -398,13 +423,13 @@ void display_buildings (void) {
 }
 
 void display_obstacles (void) {
-  for_chained_list_value_of_type (context.obstacles, p_obstacle_3D) {
+  for_chained_list_value (context.obstacles) {
     display_obstacle (value) ;
   }
 }
 
 void display_all_bonus (void) {
-  for_chained_list_value_of_type (context.bonus, p_bonus_3D) {
+  for_chained_list_value (context.bonus) {
     display_bonus (value) ;
   }
 }
@@ -456,6 +481,9 @@ void animation (void) {
     context.game_state.bg_begin_animation_x += context.parameters.road_length / 1500. ;
     context.game_state.bg_begin_animation_y += context.parameters.road_length / 1500. ;
     if (context.game_state.bg_begin_animation_x >= context.parameters.road_length)
+    //context.game_state.road_begin_animation_y = context.parameters.road_length ;
+    //context.game_state.bg_begin_animation_x = context.parameters.road_length ;
+    //context.game_state.bg_begin_animation_y = context.parameters.road_length ;
       context.game_state.vrooming = 1000 ;
   } else {
     context.player.position += context.player.speed ;

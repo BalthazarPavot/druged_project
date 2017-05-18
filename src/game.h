@@ -3,6 +3,7 @@
 #define _GAME_H
 
 
+#include <math.h>
 #include <time.h>
 
 

@@ -18,6 +18,7 @@
 #define CUBE      0x03
 #define CONE      0x04
 #define TILE      0x05
+#define TEXT      0x06
 
 #define ARMS_INTO_VEHICLE 0
 #define ARMS_ON_RIGHT 1
@@ -34,12 +35,15 @@ void display_building (p_building_3D building) ;
 void display_obstacle (p_obstacle_3D obstacle) ;
 void display_bonus (p_bonus_3D bonus) ;
 void *display_tile (p_object_3D tile) ;
+void *display_text (p_object_3D text) ;
 void display_background (void) ;
 void display_road (void) ;
 void display_buildings (void) ;
 void display_obstacles (void) ;
 void display_all_bonus (void) ;
 void display_character (void) ;
+void print (int x, int y, int z, char *string) ;
+void print_no_follow (int x, int y, int z, char *string) ;
 void display_screen (void) ;
 void animation (void) ;
 

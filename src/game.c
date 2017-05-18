@@ -12,9 +12,9 @@ void generate_default_context () {
   set_chained_list_free_chain_value (context.buildings, free_building_3D) ;
   set_chained_list_free_chain_value (context.obstacles, free_object_3D) ;
   set_chained_list_free_chain_value (context.bonus, free_bonus_3D) ;
-  context.parameters.bonus_frequency = 0.35 ;
+  context.parameters.bonus_frequency = 0.1 ;
   context.parameters.building_frequency = 0.3 ;
-  context.parameters.obstacle_frequency = 0.25 ;
+  context.parameters.obstacle_frequency = 0.01 ;
   context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
   context.player.speed = 0.1 ;
@@ -35,7 +35,7 @@ void parse_arguments (int argc, char *argv[]) {
   context.argc = argc ;
   context.argv = argv ;
   if (argc > 1)
-    context.parameters.road_length = atoi (argv[1]) ;
+    context.parameters.road_length = fmax (atoi (argv[1]), 1000) ;
   else
     context.parameters.road_length = 50000 ;
 }
@@ -80,7 +80,6 @@ int add_new_obstacle (int distance) {
   init_random_obstacle_3D (&obstacle) ;
   set_random_obstacle_3D_position (&obstacle, -1, distance, -1) ;
   push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
-  obstacle.dimensions.depth = 10 ;
   return obstacle.dimensions.depth ;
 }
 

@@ -40,6 +40,9 @@ typedef t_color* p_color ;
 typedef struct s_dimension_3D t_dimension_3D ;
 typedef t_dimension_3D* p_dimension_3D ;
 
+typedef struct s_transform_3D t_transform_3D ;
+typedef t_transform_3D* p_transform_3D ;
+
 typedef void *(*p_display_object_3D_method) (p_object_3D) ;
 
 
@@ -57,6 +60,12 @@ struct s_dimension_3D {
   int second_radius ;
 } ;
 
+struct s_transform_3D {
+  float angle_x ;
+  float angle_y ;
+  float angle_z ;
+} ;
+
 struct s_color {
   unsigned char r ;
   unsigned char g ;
@@ -69,6 +78,7 @@ struct s_object_3D {
   t_position_3D position ;
   t_dimension_3D dimensions ;
   t_color color ;
+  t_transform_3D transform ;
   char type ;
 } ;
 
@@ -102,6 +112,8 @@ struct s_player_object_3D {
 } ;
 
 p_object_3D new_object_3D () ;
+void init_object_3D_tile (p_object_3D object, int x, int y, int z, int w, int d, int h) ;
+void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radius, int height) ;
 void free_object_3D (void *object) ;
 
 p_building_3D new_building_3D ()  ;
@@ -120,6 +132,8 @@ void free_building_3D (void *building) ;
 p_obstacle_3D new_obstacle_3D () ;
 void init_obstacle_3D (p_obstacle_3D obstacle) ;
 void init_random_obstacle_3D (p_obstacle_3D obstacle) ;
+void generate_obstacle (p_obstacle_3D obstacle) ;
+void generate_stop_sign (p_obstacle_3D obstacle) ;
 void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int z) ;
 void free_obstacle_3D (void *obstacle) ;
 

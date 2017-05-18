@@ -26,8 +26,32 @@ void init_object_3D_tile (p_object_3D object, int x, int y, int z, int w, int d,
   object->type = TILE ;
 }
 
+void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radius, int height) {
+  object->display = display_cylinder ;
+  object->position.x = x ;
+  object->position.y = y ;
+  object->position.z = z ;
+  object->dimensions.radius = radius ;
+  object->dimensions.height = height ;
+  object->type = CYLINDRE ;
+}
+
+void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, unsigned char r, unsigned char g, unsigned char b) {
+  object->display = display_text ;
+  object->position.x = x ;
+  object->position.y = y ;
+  object->position.z = z ;
+  object->color.r = r ;
+  object->color.g = g ;
+  object->color.b = b ;
+  object->tree = (p_tree)strdup (text) ;
+  object->type = TEXT ;
+}
+
 static void _free_object_3D (p_object_3D object) {
   if (object != NULL) {
+    if (object->type == TEXT && object->tree != NULL)
+      free (object->tree) ;
     free (object) ;
   }
 }
@@ -50,6 +74,7 @@ p_building_3D new_building_3D () {
 void init_building_3D (p_building_3D building) {
   if (building == NULL)
     return ;
+  bzero (building, sizeof (t_building_3D)) ;
   building->objects = new_chained_list () ;
   set_chained_list_free_chain_value (building->objects, free_object_3D) ;
 }
@@ -176,20 +201,62 @@ p_obstacle_3D new_obstacle_3D () {
 }
 
 void init_obstacle_3D (p_obstacle_3D obstacle) {
+  bzero (obstacle, sizeof (t_obstacle_3D)) ;
   obstacle->objects = new_chained_list () ;
   set_chained_list_free_chain_value (obstacle->objects, free_object_3D) ;
 }
 
 void init_random_obstacle_3D (p_obstacle_3D obstacle) {
+  if (obstacle == NULL)
+    return ;
   init_obstacle_3D (obstacle) ;
+  generate_obstacle (obstacle) ;
+}
+
+void generate_obstacle (p_obstacle_3D obstacle) {
+  if (obstacle == NULL)
+    return ;
+  switch (rand () % 3) {
+    case 0:
+      generate_stop_sign (obstacle) ;
+      break ;
+    case 1:
+      break ;
+    case 2:
+    default:
+      break ;
+  }
+}
+
+void generate_stop_sign (p_obstacle_3D obstacle) {
+  t_object_3D pipe ;
+  t_object_3D sign ;
+  //t_object_3D text ;
+
+  if (obstacle == NULL)
+    return ;
+  init_object_3D_cylinder (&pipe, 0, 0, 0, 2, 40) ;
+  init_object_3D_cylinder (&sign, 0, 0, 35, 8, 1) ;
+  //init_object_3D_text (&text, -5, -5, 35, "Drug's BAD", 128, 0, 0) ;
+  sign.transform.angle_x = 90 ;
+  sign.transform.angle_z = 90 ;
+  push_chained_list (obstacle->objects, &pipe, sizeof (t_object_3D)) ;
+  push_chained_list (obstacle->objects, &sign, sizeof (t_object_3D)) ;
+  //push_chained_list (obstacle->objects, &text, sizeof (t_object_3D)) ;
+  
 }
 
 void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int z) {
   if (obstacle == NULL)
     return ;
-  obstacle->position.x = x == -1 ? (ROAD_SPAN/2 + 5) * (rand ()%2 ? 1 : -1) : x ;
+  obstacle->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 2 * (rand () % 2) : x ;
   obstacle->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
   obstacle->position.z = z == -1 ? 0 : z ;
+  for_chained_list_value (obstacle->objects) {
+    ((p_object_3D) value)->position.x += obstacle->position.x ;
+    ((p_object_3D) value)->position.y += obstacle->position.y ;
+    ((p_object_3D) value)->position.z += obstacle->position.z ;
+  }
 }
 
 static void _free_obstacle_3D (p_obstacle_3D obstacle) {
