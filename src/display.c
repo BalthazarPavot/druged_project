@@ -330,8 +330,17 @@ void *display_sphere (p_object_3D sphere) {
 }
 
 void *display_cube (p_object_3D cube) {
-  _display_real_cube (0, 0, 0, 0) ;
+  _display_real_cube (cube->position.x, cube->position.y, cube->position.z, cube->dimensions.width) ;
   return cube ;
+}
+
+void *display_tile (p_object_3D tile) {
+  if (tile->color.r || tile->color.g ||tile->color.b) {
+    glColor3f(tile->color.r/255.0, tile->color.g/255.0, tile->color.b/255.0);
+  }
+  _display_cube (tile->position.x, tile->position.y, tile->position.z,
+    tile->dimensions.width, tile->dimensions.depth, tile->dimensions.height) ;
+  return tile ;
 }
 
 void display_background (void) {
@@ -358,28 +367,27 @@ void display_building (p_building_3D building) {
   glColor3f(180./255, 90./255, 0.0f);
   if (fabs (building->position.y - context.player.position) > 500)
     return ;
-  _display_real_cube (building->position.x, building->position.y, building->position.z, building->dimensions.depth) ;
-  for_chained_list_value_of_type (building->objects, p_object_3D) {
-    if (value->position.y - context.player.position > 1000)
-      return ;
+  _display_cube (building->position.x, building->position.y, building->position.z,
+    building->dimensions.width, building->dimensions.depth, building->dimensions.height) ;
+  for_chained_list_value (building->objects) {
+    if (((p_object_3D)value)->display)
+      ((p_object_3D)value)->display (value) ;
   }
 }
 
 void display_obstacle (p_obstacle_3D obstacle) {
-  if (fabs (obstacle->position.y - context.player.position) > 1000)
+  if (fabs (obstacle->position.y - context.player.position) > 500)
     return ;
-  for_chained_list_value_of_type (obstacle->objects, p_object_3D) {
-    if (value->position.y - context.player.position > 1000)
-      return ;
+  for_chained_list_value (obstacle->objects) {
+    ((p_object_3D)value)->display (value) ;
   }
 }
 
 void display_bonus (p_bonus_3D bonus) {
-  if (fabs (bonus->position.y - context.player.position) > 1000)
+  if (fabs (bonus->position.y - context.player.position) > 500)
     return ;
-  for_chained_list_value_of_type (bonus->objects, p_object_3D) {
-    if (value->position.y - context.player.position > 1000)
-      return ;
+  for_chained_list_value (bonus->objects) {
+    ((p_object_3D)value)->display (value) ;
   }
 }
 
