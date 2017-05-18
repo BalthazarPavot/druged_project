@@ -6,37 +6,26 @@
 void handle_keyboard (unsigned char key, int x, int y) {
   switch (key) {
     case '8':
-      glRotatef(-0.1, 1, 0, 0);
+      if (context.game_state.vrooming == 1)
+        glRotatef(-0.1, 1, 0, 0);
       break ;
     case '2':
-      glRotatef(0.1, 1, 0, 0);
+      if (context.game_state.vrooming == 1)
+        glRotatef(0.1, 1, 0, 0);
       break ;
     case '4':
-      glRotatef(-0.1, 0, 1, VEHICLE_POS_Z);
+      if (context.game_state.vrooming == 1)
+        glRotatef(-0.1, 0, 1, VEHICLE_POS_Z);
       break ;
     case '6':
-      glRotatef(0.1, 0, 1, VEHICLE_POS_Z);
-      break ;
-    case 'w':
-    case 'z':
-    case 'h':
-      break ;
-    case 'q':
-    case 'a':
-    case 'j':
-      break ;
-    case 'd':
-    case 'k':
-      break ;
-    case 's':
-    case 'l':
+      if (context.game_state.vrooming == 1)
+        glRotatef(0.1, 0, 1, VEHICLE_POS_Z);
       break ;
     case '\x1b': /* escape = '' = '\x1b' */
       exit_game () ;
       exit (0) ;
     default:
-      printf ("Unknown key: %c\n", key) ;
-      x += y ;  /* not to be bitten for unused variables */
+      x += y ; // not to be bitten by gcc
       break ;
   }
 }
