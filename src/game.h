@@ -8,8 +8,11 @@
 
 #include "GL/gl.h"
 #include "GL/glut.h"
+#include "GL/freeglut.h" 
 
 
+
+#include "chained_list.h"
 #include "common.h"
 #include "display.h"
 #include "event_handler.h"
