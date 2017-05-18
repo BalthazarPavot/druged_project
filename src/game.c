@@ -58,42 +58,42 @@ void generate_buildings (float frequency, int length) {
 }
 
 int add_new_building () {
-  p_building_3D building ;
+  t_building_3D building ;
 
-  building = new_building_3D () ;
-  push_chained_list (context.buildings, building, sizeof (t_building_3D)) ;
-  building->dimensions.depth = 50 ;
-  return building->dimensions.depth ;
+  init_building_3D (&building) ;
+  push_chained_list (context.buildings, &building, sizeof (t_building_3D)) ;
+  building.dimensions.depth = 50 ;
+  return building.dimensions.depth ;
 }
 
 void generate_obstacles (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
-    if (rand() / RAND_MAX < frequency)
+    if ((double)rand() / (double)RAND_MAX < frequency)
       distance += add_new_obstacle () ;
 }
 
 int add_new_obstacle () {
-  p_obstacle_3D obstacle ;
+  t_obstacle_3D obstacle ;
 
-  obstacle = new_obstacle_3D () ;
-  push_chained_list (context.obstacles, obstacle, sizeof (t_obstacle_3D)) ;
-  obstacle->dimensions.depth = 10 ;
-  return obstacle->dimensions.depth ;
+  init_obstacle_3D (&obstacle) ;
+  push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
+  obstacle.dimensions.depth = 10 ;
+  return obstacle.dimensions.depth ;
 }
 
 void generate_bonus (float frequency, int length) {
   for (int distance=0 ; distance < length ; distance += 1)
-    if (rand() / RAND_MAX < frequency)
+    if ((double)rand() / (double)RAND_MAX < frequency)
       distance += add_new_bonus () ;
 }
 
 int add_new_bonus () {
-  p_bonus_3D bonus ;
+  t_bonus_3D bonus ;
 
-  bonus = new_bonus_3D () ;
-  push_chained_list (context.bonus, bonus, sizeof (t_bonus_3D)) ;
-  bonus->dimensions.depth = 10 ;
-  return bonus->dimensions.depth ;
+  init_bonus_3D (&bonus) ;
+  push_chained_list (context.bonus, &bonus, sizeof (t_bonus_3D)) ;
+  bonus.dimensions.depth = 10 ;
+  return bonus.dimensions.depth ;
 }
 
 void play_game () {

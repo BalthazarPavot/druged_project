@@ -23,6 +23,7 @@ static void _free_object_3D (p_object_3D object) {
 
 void free_object_3D (void *object) {
   _free_object_3D (*(p_object_3D*)object) ;
+  free (object) ;
 }
 
 
@@ -32,13 +33,16 @@ p_building_3D new_building_3D () {
 
   if ((building = calloc (1, sizeof (t_building_3D))) == NULL)
     exit_game () ;
-  building->objects = new_chained_list () ;
-  set_chained_list_free_chain_value (building->objects, free_object_3D) ;
+  init_building_3D (building) ;
   return building ;
 }
 
+void init_building_3D (p_building_3D building) {
+  building->objects = new_chained_list () ;
+  set_chained_list_free_chain_value (building->objects, free_object_3D) ;
+}
+
 static void _free_building_3D (p_building_3D building) {
-  printf ("_free_object_3D: %p\n", (void*)building) ;
   if (building != NULL) {
     free_chained_list (building->objects) ;
     free (building) ;
@@ -56,9 +60,13 @@ p_obstacle_3D new_obstacle_3D () {
 
   if ((obstacle = calloc (1, sizeof (t_obstacle_3D))) == NULL)
     exit_game () ;
+  init_obstacle_3D (obstacle) ;
+  return obstacle ;
+}
+
+void init_obstacle_3D (p_obstacle_3D obstacle) {
   obstacle->objects = new_chained_list () ;
   set_chained_list_free_chain_value (obstacle->objects, free_object_3D) ;
-  return obstacle ;
 }
 
 static void _free_obstacle_3D (p_obstacle_3D obstacle) {
@@ -69,7 +77,8 @@ static void _free_obstacle_3D (p_obstacle_3D obstacle) {
 }
 
 void free_obstacle_3D (void *obstacle) {
-  _free_obstacle_3D ((p_obstacle_3D)obstacle) ;
+  _free_obstacle_3D (*(p_obstacle_3D*)obstacle) ;
+  free (obstacle) ;
 }
 
 
@@ -79,9 +88,13 @@ p_bonus_3D new_bonus_3D () {
 
   if ((bonus = calloc (1, sizeof (t_bonus_3D))) == NULL)
     exit_game () ;
+  init_bonus_3D (bonus) ;
+  return bonus ;
+}
+
+void init_bonus_3D (p_bonus_3D bonus) {
   bonus->objects = new_chained_list () ;
   set_chained_list_free_chain_value (bonus->objects, free_object_3D) ;
-  return bonus ;
 }
 
 static void _free_bonus_3D (p_bonus_3D bonus) {
@@ -92,5 +105,6 @@ static void _free_bonus_3D (p_bonus_3D bonus) {
 }
 
 void free_bonus_3D (void *bonus) {
-  _free_bonus_3D ((p_bonus_3D)bonus) ;
+  _free_bonus_3D (*(p_bonus_3D*)bonus) ;
+  free (bonus) ;
 }

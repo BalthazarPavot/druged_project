@@ -82,14 +82,20 @@ struct s_player_object_3D {
   t_object_3D vehicle ;
 } ;
 
-p_building_3D new_building_3D ()  ;
-void free_building_3D (void *building) ;
-p_obstacle_3D new_obstacle_3D () ;
-void free_obstacle_3D (void *obstacle) ;
-p_bonus_3D new_bonus_3D () ;
-void free_bonus_3D (void *bonus) ;
 p_object_3D new_object_3D () ;
 void free_object_3D (void *object) ;
+
+p_building_3D new_building_3D ()  ;
+void init_building_3D (p_building_3D building) ;
+void free_building_3D (void *building) ;
+
+p_obstacle_3D new_obstacle_3D () ;
+void init_obstacle_3D (p_obstacle_3D obstacle) ;
+void free_obstacle_3D (void *obstacle) ;
+
+p_bonus_3D new_bonus_3D () ;
+void init_bonus_3D (p_bonus_3D bonus) ;
+void free_bonus_3D (void *bonus) ;
 
 
 #include "game.h"
