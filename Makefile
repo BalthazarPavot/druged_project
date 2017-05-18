@@ -15,7 +15,7 @@ BINDIR		=		bin
 TARGET		=		main
 
 SRCDIR		=		src
-SRCS			=		$(addsuffix .c, display event_handler game ktree)
+SRCS			=		$(addsuffix .c, display event_handler game ktree objects_3D)
 
 OBJS			=		$(SRCS:.c=.o)
 GCH				=		$(SRCS:.c=.gch)
