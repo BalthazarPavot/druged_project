@@ -45,7 +45,7 @@ struct s_game_state {
   float road_begin_animation_y ;
   float bg_begin_animation_x ;
   float bg_begin_animation_y ;
-  char vrooming ;
+  int vrooming ;
 } ;
 
 struct s_key_down {
