@@ -9,9 +9,9 @@ void generate_default_context () {
   context.buildings = new_chained_list () ;
   context.obstacles = new_chained_list () ;
   context.bonus = new_chained_list () ;
-  context.parameters.bonus_velocity = 0.35 ;
-  context.parameters.building_velocity = 0.3 ;
-  context.parameters.obstacle_velocity = 0.25 ;
+  context.parameters.bonus_frequency = 0.35 ;
+  context.parameters.building_frequency = 0.3 ;
+  context.parameters.obstacle_frequency = 0.25 ;
   context.parameters.road_length = 1000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
 }
@@ -38,7 +38,7 @@ void parse_arguments (int argc, char *argv[]) {
 
 void generate_game () {
   srand(time(NULL)) ;
-  
+  generate_buildings ()
 }
 
 void play_game () {

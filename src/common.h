@@ -27,9 +27,9 @@ typedef struct s_game_state t_game_state ;
 t_context context ;
 
 struct s_parameters {
-  int building_velocity ;
-  int obstacle_velocity ;
-  int bonus_velocity ;
+  int building_frequency ;
+  int obstacle_frequency ;
+  int bonus_frequency ;
   int road_length ;
 } ;
 
