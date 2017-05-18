@@ -86,15 +86,25 @@ p_object_3D new_object_3D () ;
 void free_object_3D (void *object) ;
 
 p_building_3D new_building_3D ()  ;
+void init_random_building_3D (p_building_3D building) ;
 void init_building_3D (p_building_3D building) ;
+void generate_building (p_building_3D building) ;
+void generate_building_0 (p_building_3D building) ;
+void generate_building_1 (p_building_3D building) ;
+void generate_building_2 (p_building_3D building) ;
+void set_random_building_3D_position (p_building_3D building, int x, int y, int z) ;
 void free_building_3D (void *building) ;
 
 p_obstacle_3D new_obstacle_3D () ;
 void init_obstacle_3D (p_obstacle_3D obstacle) ;
+void init_random_obstacle_3D (p_obstacle_3D obstacle) ;
+void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int z) ;
 void free_obstacle_3D (void *obstacle) ;
 
 p_bonus_3D new_bonus_3D () ;
 void init_bonus_3D (p_bonus_3D bonus) ;
+void init_random_bonus_3D (p_bonus_3D bonus) ;
+void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) ;
 void free_bonus_3D (void *bonus) ;
 
 
