@@ -371,7 +371,7 @@ void display_screen (void) {
   if (context.game_state.vrooming > 1) {
     glColor3f (1.0, 0.0, 0.0);
     context.game_state.vrooming -= 1 ;
-    print (-4, 0, 20, "GOO!!") ;
+    print (-4, 0, 20, "GO !!") ;
   } else if (context.game_state.vrooming == 0) {
     glColor3f (1.0, 0.0, 0.0);
     print (-4, 0, 20, "Ready..?") ;
