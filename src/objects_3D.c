@@ -15,6 +15,17 @@ p_object_3D new_object_3D () {
   return object ;
 }
 
+void init_object_3D_tile (p_object_3D object, int x, int y, int z, int w, int d, int h) {
+  object->display = display_tile ;
+  object->position.x = x ;
+  object->position.y = y ;
+  object->position.z = z ;
+  object->dimensions.width = w ;
+  object->dimensions.depth = d ;
+  object->dimensions.height = h ;
+  object->type = TILE ;
+}
+
 static void _free_object_3D (p_object_3D object) {
   if (object != NULL) {
     free (object) ;
@@ -47,49 +58,21 @@ void init_random_building_3D (p_building_3D building) {
   if (building == NULL)
     return ;
   init_building_3D (building) ;
-  building->type = rand () % 3 ;
   generate_building (building) ;
 }
 
 void generate_building (p_building_3D building) {
   if (building == NULL)
     return ;
-  switch (building->type) {
-    case 0:
-      generate_building_0 (building) ;
-      break ;
-    case 1:
-      generate_building_1 (building) ;
-      break ;
-    case 2:
-    default:
-      generate_building_2 (building) ;
-      break ;
-  }
+  building->dimensions.depth = generate_building_dimension () ;
+  building->dimensions.width = generate_building_dimension () ;
+  building->dimensions.height = generate_building_dimension () ;
 }
 
-void generate_building_0 (p_building_3D building) {
-  if (building == NULL)
-    return ;
-  building->dimensions.depth = 10 ;
-  building->dimensions.width = 10 ;
-  building->dimensions.height = 10 ;
-}
-
-void generate_building_1 (p_building_3D building) {
-  if (building == NULL)
-    return ;
-  building->dimensions.depth = 30 ;
-  building->dimensions.width = 30 ;
-  building->dimensions.height = 30 ;
-}
-
-void generate_building_2 (p_building_3D building) {
-  if (building == NULL)
-    return ;
-  building->dimensions.depth = 20 ;
-  building->dimensions.width = 20 ;
-  building->dimensions.height = 20 ;
+int generate_building_dimension () {
+  return (rand() % (BUILDING_MAX_DIMENSION / BUILDING_STEP_DIMENSION -
+    BUILDING_MIN_DIMENSION / BUILDING_STEP_DIMENSION)) * BUILDING_STEP_DIMENSION +
+    BUILDING_MIN_DIMENSION ;
 }
 
 void set_random_building_3D_position (p_building_3D building, int x, int y, int z) {
@@ -97,15 +80,76 @@ void set_random_building_3D_position (p_building_3D building, int x, int y, int 
     return ;
   if (x == -1) {
     if (rand () % 2) {
-      building->position.x = -ROAD_MID_SPAN - 5 - building->dimensions.width ;
+      building->position.x = - ROAD_SPAN / 2 - generate_building_road_space () -
+        building->dimensions.width ;
     } else {
-      building->position.x = ROAD_MID_SPAN + 5 ;
+      building->position.x = ROAD_SPAN / 2 + generate_building_road_space () ;
     }
   } else
     building->position.x = x ;
-  //building->position.x = x == -1 ? (ROAD_SPAN/2 + 5) * (rand ()%2 ? 1 : -1) : x ;
   building->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
   building->position.z = z == -1 ? building->dimensions.height : z ;
+}
+
+int generate_building_road_space () {
+  return (rand () % (BUILDING_MAX_DIMENSION - BUILDING_MIN_ROAD_SPACE)) + BUILDING_MIN_ROAD_SPACE ;
+}
+
+void generate_details (p_building_3D building) {
+  generate_door (building) ;
+  if (rand () % 2) 
+    generate_window (building) ;
+  if (rand () % 2) 
+    generate_chimney (building) ;
+}
+
+void generate_door (p_building_3D building) {
+  if (building == NULL)
+    return ;
+  t_object_3D door ;
+  int door_pos ;
+
+  bzero (&door, sizeof (t_object_3D)) ;
+  switch (rand () % 2) {
+    case 0:
+      door_pos = rand () % (building->dimensions.depth - BUILDING_DOOR_WIDTH - 2) + 1 ;
+      if (building->position.x > 0)
+        init_object_3D_tile (&door, building->position.x-BUILDING_DOOR_DEPTH,
+          building->position.y+door_pos, building->position.z-
+          building->dimensions.height+1+BUILDING_DOOR_HEIGHT,
+          BUILDING_DOOR_DEPTH, BUILDING_DOOR_WIDTH,
+          BUILDING_DOOR_HEIGHT) ;
+      else
+        init_object_3D_tile (&door, building->position.x+building->dimensions.width+BUILDING_DOOR_DEPTH,
+          building->position.y+door_pos, building->position.z-
+          building->dimensions.height+1+BUILDING_DOOR_HEIGHT,
+          BUILDING_DOOR_DEPTH, BUILDING_DOOR_WIDTH, 
+          BUILDING_DOOR_HEIGHT) ;
+      break ;
+    case 1:
+    default:
+      door_pos = rand () % (building->dimensions.width - BUILDING_DOOR_WIDTH - 2) + 1 ;
+      init_object_3D_tile (&door, building->position.x+door_pos,
+        building->position.y-BUILDING_DOOR_DEPTH, building->position.z-
+        building->dimensions.height+1+BUILDING_DOOR_HEIGHT,
+        BUILDING_DOOR_WIDTH, BUILDING_DOOR_DEPTH,
+        BUILDING_DOOR_HEIGHT) ;
+      break ;
+  }
+  set_object_3D_color (&door, 145, 63, 0) ;
+  push_chained_list (building->objects, &door, sizeof (t_object_3D)) ;
+}
+
+void generate_window (p_building_3D building) {
+  if (building == NULL)
+    return ;
+  
+}
+
+void generate_chimney (p_building_3D building) {
+  if (building == NULL)
+    return ;
+  
 }
 
 
@@ -186,6 +230,12 @@ void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
   bonus->position.x = x == -1 ? (ROAD_SPAN/2 + 5) * (rand ()%2 ? 1 : -1) : x ;
   bonus->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
   bonus->position.z = z == -1 ? 0 : z ;
+}
+
+void set_object_3D_color (p_object_3D object, unsigned char r, unsigned char g, unsigned char b) {
+  object->color.r = r ;
+  object->color.g = g ;
+  object->color.b = b ;
 }
 
 static void _free_bonus_3D (p_bonus_3D bonus) {
