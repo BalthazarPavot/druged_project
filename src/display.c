@@ -38,11 +38,12 @@ static void _display_default_cylinder (float base, float top, float height) {
   _display_cylinder (base, top, height, height*2, 16) ;
 }
 
-static void _display_sphere () {
-  /*
-  GLUquadricObj *quadObj = gluNewQuadric();
-  gluCylinder(quadObj, base, top, height, slices, stacks);
-  */
+static void _display_sphere (float radius, float slices, float stacks) {
+   glutSolidSphere (radius, slices, stacks);
+}
+
+static void _display_default_sphere (float radius) {
+   _display_sphere (radius, 20, 20);
 }
 
 static void _display_cube (float x, float y, float z, float dx, float dy, float dz) {
@@ -102,41 +103,59 @@ static void _display_real_cube (float x, float y, float z, float w) {
 
 static void _display_vehicle () {
   glColor3f(170./255, 97./255, 41./255);
-  
+  float y = context.player.position + VEHICLE_POS_Y ;
   /* bottom */
   _display_cube (
-    VEHICLE_POS_X, VEHICLE_POS_Y, VEHICLE_POS_Z,
+    VEHICLE_POS_X, y, VEHICLE_POS_Z,
     VEHICLE_WIDTH, VEHICLE_LENGTH, VEHICLE_THICKNESS
   ) ;
   /* left */
   _display_cube (
-    VEHICLE_POS_X, VEHICLE_POS_Y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_POS_X, y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
     VEHICLE_THICKNESS, VEHICLE_LENGTH-VEHICLE_THICKNESS*2, VEHICLE_HEIGHT-VEHICLE_THICKNESS
   ) ;
   /* right */
   _display_cube (
-    VEHICLE_POS_X+VEHICLE_WIDTH-VEHICLE_THICKNESS, VEHICLE_POS_Y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_POS_X+VEHICLE_WIDTH-VEHICLE_THICKNESS, y+VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
     VEHICLE_THICKNESS, VEHICLE_LENGTH-VEHICLE_THICKNESS*2, VEHICLE_HEIGHT-VEHICLE_THICKNESS
   ) ;
   /* front */
   _display_cube (
-    VEHICLE_POS_X, VEHICLE_POS_Y+VEHICLE_LENGTH-VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_POS_X, y+VEHICLE_LENGTH-VEHICLE_THICKNESS, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
     VEHICLE_WIDTH, VEHICLE_THICKNESS, VEHICLE_HEIGHT-VEHICLE_THICKNESS
   ) ;
   /* back */
   _display_cube (
-    VEHICLE_POS_X, VEHICLE_POS_Y, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
+    VEHICLE_POS_X, y, VEHICLE_POS_Z+VEHICLE_HEIGHT-VEHICLE_THICKNESS,
     VEHICLE_WIDTH, VEHICLE_THICKNESS, VEHICLE_HEIGHT-VEHICLE_THICKNESS
   ) ;
 }
 
 static void _display_character_into_vehicle () {
-  glPushMatrix (); //remember current matrix
-  glTranslatef (VEHICLE_POS_X+VEHICLE_WIDTH/2,
-    VEHICLE_POS_Y+VEHICLE_LENGTH/2, 10);
-  glColor3f(1.0f, 1.0f, 1.0f);
+  glColor3f (1.0f, 1.0f, 1.0f);
+  glPushMatrix () ;
+
+  /* body */
+  glTranslatef (VEHICLE_POS_X + VEHICLE_WIDTH / 2,
+    context.player.position + VEHICLE_POS_Y + VEHICLE_LENGTH / 2, 10);
   _display_default_cylinder (3, 0, 15) ;
-  glPopMatrix (); //restore matrix
+
+  /* left arm */
+  glTranslatef (-4, 5, 11);
+  glRotatef (95, 1, 0, 0) ;
+  glRotatef (40, 0, 1, 0) ;
+  _display_default_cylinder (1, 0, 8) ;
+
+  /* right arm */
+  glRotatef (-80, 0, 1, 0) ;
+  glTranslatef (6, 0, -6);
+  _display_default_cylinder (1, 0, 8) ;
+
+  /* head */
+  glRotatef (80, 0, 1, 0) ;
+  glTranslatef (-6, 6, 0);
+  _display_default_sphere (2) ;
+  glPopMatrix () ;
 }
 
 static void _display_character_on_left () {
@@ -162,7 +181,7 @@ void *display_cone (p_object_3D cone) {
 }
 
 void *display_sphere (p_object_3D sphere) {
-  _display_sphere () ;
+  _display_default_sphere (0) ;
   return sphere ;
 }
 
@@ -243,6 +262,7 @@ void display_character (void) {
 }
 
 void display_screen (void) {
+  char string[4] = "Go!" ;
 
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
   glMatrixMode (GL_MODELVIEW) ;
@@ -253,6 +273,15 @@ void display_screen (void) {
   display_obstacles () ;
   display_all_bonus () ;
   display_character () ;
+    if (context.game_state.vrooming > 1) {
+      glColor3f(0.0, 1.0, 0.0);
+      //context.game_state.vrooming -= 1 ;
+      for (char *i=string;*i;i++) {
+         //glRasterPos2f(x, y);
+         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_10, *i);
+         printf ("%c\n", *i) ;
+      }
+    }
 
   glutSwapBuffers () ;
 }

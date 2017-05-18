@@ -36,7 +36,7 @@ struct s_parameters {
 struct s_player {
   int score ;
   int score_multiplier ;
-  int position ; /* relatively to the road length */
+  float position ; /* relatively to the road length */
   t_player_object_3D object ;
   char arms_position ;
 } ;
