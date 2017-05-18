@@ -5,6 +5,7 @@
 
 #include "chained_list.h"
 #include "display.h"
+#include "objects_3D.h"
 
 
 #define TITLE "Drug! Drug! Drug! Drug!"
@@ -27,9 +28,9 @@ typedef struct s_game_state t_game_state ;
 t_context context ;
 
 struct s_parameters {
-  int building_frequency ;
-  int obstacle_frequency ;
-  int bonus_frequency ;
+  float building_frequency ;
+  float obstacle_frequency ;
+  float bonus_frequency ;
   int road_length ;
 } ;
 
