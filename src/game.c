@@ -10,14 +10,14 @@ void generate_default_context () {
   context.obstacles = new_chained_list () ;
   context.bonus = new_chained_list () ;
   set_chained_list_free_chain_value (context.buildings, free_building_3D) ;
-  set_chained_list_free_chain_value (context.obstacles, free_object_3D) ;
+  set_chained_list_free_chain_value (context.obstacles, free_obstacle_3D) ;
   set_chained_list_free_chain_value (context.bonus, free_bonus_3D) ;
   context.parameters.bonus_frequency = 0.1 ;
   context.parameters.building_frequency = 0.3 ;
   context.parameters.obstacle_frequency = 0.007 + context.parameters.bonus_frequency;
   context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
-  context.player.speed = 0.4 ;
+  context.player.speed = BASE_SPEED ;
 }
 
 void initialize_opengl () {
@@ -87,7 +87,7 @@ int add_new_obstacle (int distance) {
   set_random_obstacle_3D_position (&obstacle, -1, distance, -1) ;
   push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
   //return obstacle.dimensions.depth ;
-  return obstacle.type == SIGN ? 20 : 50 ;
+  return (obstacle.type == SIGN ? 20 : 50) / DISTANCE_REDUCTOR ;
 }
 
 int add_new_bonus (int distance) {
@@ -96,7 +96,7 @@ int add_new_bonus (int distance) {
   init_random_bonus_3D (&bonus) ;
   set_random_bonus_3D_position (&bonus, -1, distance, -1) ;
   push_chained_list (context.bonus, &bonus, sizeof (t_bonus_3D)) ;
-  return 20 ;
+  return 20 / DISTANCE_REDUCTOR ;
 }
 
 void play_game () {
@@ -121,22 +121,10 @@ void play_game () {
 }
 
 void destroyContext () {
-  //for_chained_list_value_of_type (context.buildings, p_building_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.buildings) ;
   context.buildings = NULL ;
-  //for_chained_list_value_of_type (context.obstacles, p_obstacle_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.obstacles) ;
   context.obstacles = NULL ;
-  //for_chained_list_value_of_type (context.bonus, p_bonus_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.bonus) ;
   context.bonus = NULL ;
   if (context.quadObj != NULL)

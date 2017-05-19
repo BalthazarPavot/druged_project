@@ -19,6 +19,8 @@
 #include "event_handler.h"
 #include "objects_3D.h"
 
+#define DISTANCE_REDUCTOR 1.
+
 
 t_context context ;
 
