@@ -39,7 +39,11 @@ void handle_special (int key, int x, int y) {
       context.player.arms_position = ARMS_ON_LEFT ;
       break ;
     case GLUT_KEY_UP:
+      if (context.player.jumping != NOT_JUMPING)
+        break;
       context.player.arms_position = PUT_YOUR_HANDS_UP ;
+      context.player.jumping = JUMP_ASCENTION ;
+      context.player.height = 0 ;
       break ;
     case GLUT_KEY_DOWN:
       context.player.arms_position = ARMS_INTO_VEHICLE ;
