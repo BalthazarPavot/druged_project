@@ -16,6 +16,7 @@ p_object_3D new_object_3D () {
 }
 
 void init_object_3D_tile (p_object_3D object, int x, int y, int z, int w, int d, int h) {
+  bzero (object, sizeof (t_object_3D)) ;
   object->display = display_tile ;
   object->position.x = x ;
   object->position.y = y ;
@@ -27,6 +28,7 @@ void init_object_3D_tile (p_object_3D object, int x, int y, int z, int w, int d,
 }
 
 void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radius, int height) {
+  bzero (object, sizeof (t_object_3D)) ;
   object->display = display_cylinder ;
   object->position.x = x ;
   object->position.y = y ;
@@ -37,6 +39,7 @@ void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radiu
 }
 
 void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, unsigned char r, unsigned char g, unsigned char b) {
+  bzero (object, sizeof (t_object_3D)) ;
   object->display = display_text ;
   object->position.x = x ;
   object->position.y = y ;
@@ -57,8 +60,7 @@ static void _free_object_3D (p_object_3D object) {
 }
 
 void free_object_3D (void *object) {
-  _free_object_3D (*(p_object_3D*)object) ;
-  free (object) ;
+  _free_object_3D ((p_object_3D)object) ;
 }
 
 
@@ -186,8 +188,7 @@ static void _free_building_3D (p_building_3D building) {
 }
 
 void free_building_3D (void *building) {
-  _free_building_3D (*(p_building_3D*)building) ;
-  free (building) ;
+  _free_building_3D ((p_building_3D)building) ;
 }
 
 
@@ -308,8 +309,7 @@ static void _free_obstacle_3D (p_obstacle_3D obstacle) {
 }
 
 void free_obstacle_3D (void *obstacle) {
-  _free_obstacle_3D (*(p_obstacle_3D*)obstacle) ;
-  free (obstacle) ;
+  _free_obstacle_3D ((p_obstacle_3D)obstacle) ;
 }
 
 
@@ -324,6 +324,7 @@ p_bonus_3D new_bonus_3D () {
 }
 
 void init_bonus_3D (p_bonus_3D bonus) {
+  bzero (bonus, sizeof (t_bonus_3D)) ;
   bonus->objects = new_chained_list () ;
   set_chained_list_free_chain_value (bonus->objects, free_object_3D) ;
 }
@@ -349,9 +350,9 @@ void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
   else if (rand () % 6 == 0)
     bonus->position.x = -ROAD_SPAN / 4 + ROAD_SPAN / 3 ;
   else if (rand () % 2)
-    bonus->position.x = -ROAD_SPAN / 6 ;
+    bonus->position.x = -ROAD_SPAN / 6 + 2;
   else
-    bonus->position.x = ROAD_SPAN / 3 ;
+    bonus->position.x = ROAD_SPAN / 3  - 2;
   //bonus->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 3 * (rand () % 3) : x ;
   bonus->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
   //bonus->position.z = z == -1 ? fabs (bonus->position.x) < ROAD_SPAN / 4 ? 20 : 0 : z ;
@@ -377,6 +378,5 @@ static void _free_bonus_3D (p_bonus_3D bonus) {
 }
 
 void free_bonus_3D (void *bonus) {
-  _free_bonus_3D (*(p_bonus_3D*)bonus) ;
-  free (bonus) ;
+  _free_bonus_3D ((p_bonus_3D)bonus) ;
 }
