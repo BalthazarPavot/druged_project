@@ -53,10 +53,12 @@ struct s_parameters {
 struct s_player {
   int score ;
   int score_multiplier ;
+  float height ;
   float position ; /* relatively to the road length */
   float speed ;
   t_player_object_3D object ;
   char arms_position ;
+  char jumping ;
 } ;
 
 struct s_game_state {
