@@ -35,7 +35,8 @@
 #define JUMP_HEIGHT 20
 
 #define SPEED_INCREASE 0.001
-#define MAX_SPEED 1
+#define BASE_SPEED 0.75
+#define MAX_SPEED 1.5
 
 void *display_cylinder (p_object_3D cylinder) ;
 void *display_cone (p_object_3D cone) ;
