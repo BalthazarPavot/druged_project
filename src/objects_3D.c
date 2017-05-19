@@ -217,32 +217,43 @@ void generate_obstacle (p_obstacle_3D obstacle) {
   if (obstacle == NULL)
     return ;
   switch (rand () % 3) {
-    case 0:
-      generate_stop_sign (obstacle) ;
-      break ;
-    case 1:
-      break ;
+    //case 0:
+      //break ;
+    //case 1:
+      //break ;
     case 2:
     default:
+      generate_stop_sign (obstacle) ;
       break ;
   }
 }
 
 void generate_stop_sign (p_obstacle_3D obstacle) {
   t_object_3D pipe ;
-  t_object_3D sign ;
-  //t_object_3D text ;
+  t_object_3D sign1 ;
+  t_object_3D sign2 ;
+  t_object_3D sign3 ;
 
   if (obstacle == NULL)
     return ;
-  init_object_3D_cylinder (&pipe, 0, 0, 0, 2, 40) ;
-  init_object_3D_cylinder (&sign, 0, 0, 35, 8, 1) ;
-  //init_object_3D_text (&text, -5, -5, 35, "Drug's BAD", 128, 0, 0) ;
-  sign.transform.angle_x = 90 ;
-  sign.transform.angle_z = 90 ;
+  init_object_3D_cylinder (&pipe, 0, 0, 0, 1, 40) ;
+  init_object_3D_cylinder (&sign1, 0, -2, 35, 8, 0.5) ;
+  init_object_3D_cylinder (&sign2, 0, -3, 35, 7.5, 0.5) ;
+  init_object_3D_tile (&sign3, -4, -4, 37, 8, 1, 3) ;
+  set_object_3D_color (&pipe, 96, 96, 96) ;
+  set_object_3D_color (&sign1, 96, 96, 96) ;
+  set_object_3D_color (&sign2, 250, 0, 0) ;
+  set_object_3D_color (&sign3, 255, 255, 255) ;
+  sign1.transform.angle_x = 90 ;
+  sign1.transform.angle_z = 90 ;
+  sign2.transform.angle_x = 90 ;
+  sign2.transform.angle_z = 90 ;
+  sign3.transform.angle_x = 90 ;
+  sign3.transform.angle_z = 90 ;
   push_chained_list (obstacle->objects, &pipe, sizeof (t_object_3D)) ;
-  push_chained_list (obstacle->objects, &sign, sizeof (t_object_3D)) ;
-  //push_chained_list (obstacle->objects, &text, sizeof (t_object_3D)) ;
+  push_chained_list (obstacle->objects, &sign1, sizeof (t_object_3D)) ;
+  push_chained_list (obstacle->objects, &sign2, sizeof (t_object_3D)) ;
+  push_chained_list (obstacle->objects, &sign3, sizeof (t_object_3D)) ;
   
 }
 

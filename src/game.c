@@ -14,10 +14,10 @@ void generate_default_context () {
   set_chained_list_free_chain_value (context.bonus, free_bonus_3D) ;
   context.parameters.bonus_frequency = 0.1 ;
   context.parameters.building_frequency = 0.3 ;
-  context.parameters.obstacle_frequency = 0.01 ;
+  context.parameters.obstacle_frequency = 0.005 ;
   context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
-  context.player.speed = 0.1 ;
+  context.player.speed = 0.2 ;
 }
 
 void initialize_opengl () {

@@ -47,9 +47,9 @@ typedef void *(*p_display_object_3D_method) (p_object_3D) ;
 
 
 struct s_position_3D {
-  int x ;
-  int y ;
-  int z ;
+  float x ;
+  float y ;
+  float z ;
 } ;
 
 struct s_dimension_3D {

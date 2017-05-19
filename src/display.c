@@ -316,6 +316,9 @@ static void _display_character_hands_up () {
 
 void *display_cylinder (p_object_3D cylinder) {
   glPushMatrix () ;
+  if (cylinder->color.r || cylinder->color.g ||cylinder->color.b) {
+    glColor3f(cylinder->color.r/255.0, cylinder->color.g/255.0, cylinder->color.b/255.0);
+  }
   glTranslatef (cylinder->position.x, cylinder->position.y, cylinder->position.z) ;
   if (cylinder->transform.angle_x)
     glRotatef (cylinder->transform.angle_x, 1, 0, 0) ;
