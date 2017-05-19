@@ -5,7 +5,9 @@
 
 
 static void _display_cylinder (float base, float top, float height, float slices, float stacks) {
+  glMatrixMode(GL_PROJECTION);
   gluCylinder (context.quadObj, base, top, height, slices, stacks);
+  glMatrixMode(GL_MODELVIEW);
 
   /*
   GLUquadricObj *quadObj = gluNewQuadric();
@@ -469,6 +471,22 @@ void print (int x, int y, int z, char *string) {
     glutBitmapCharacter (GLUT_BITMAP_TIMES_ROMAN_24 , string[i]) ;
 }
 
+char text_buffer[255] ;
+void display_informations () {
+  if (context.game_state.vrooming > 1) {
+    glColor3f (1.0, 0.0, 0.0);
+    context.game_state.vrooming -= 1 ;
+    print (-4, 0, 20, "GO !!") ;
+  } else if (context.game_state.vrooming == 0) {
+    glColor3f (1.0, 0.0, 0.0);
+    print (-4, 0, 20, "Ready..?") ;
+  }
+  glColor3f (1.0, 1.0, 1.0);
+  sprintf (text_buffer, "Score: %d    Speed: %.2f    Distance: %.0f/%d",
+    context.player.score, context.player.speed, context.player.position, context.parameters.road_length) ;
+  print (-15, -50, 3, text_buffer) ;
+}
+
 void display_screen (void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
   glMatrixMode (GL_MODELVIEW) ;
@@ -479,14 +497,7 @@ void display_screen (void) {
   display_obstacles () ;
   display_all_bonus () ;
   display_character () ;
-  if (context.game_state.vrooming > 1) {
-    glColor3f (1.0, 0.0, 0.0);
-    context.game_state.vrooming -= 1 ;
-    print (-4, 0, 20, "GO !!") ;
-  } else if (context.game_state.vrooming == 0) {
-    glColor3f (1.0, 0.0, 0.0);
-    print (-4, 0, 20, "Ready..?") ;
-  }
+  display_informations () ;
   glutSwapBuffers () ;
 }
 
@@ -499,7 +510,7 @@ void animation (void) {
     context.game_state.road_begin_animation_y = context.parameters.road_length ;
     context.game_state.bg_begin_animation_x = context.parameters.road_length ;
     context.game_state.bg_begin_animation_y = context.parameters.road_length ;
-      context.game_state.vrooming = 1000 ;
+      context.game_state.vrooming = 100 ;
   } else {
     context.player.position += context.player.speed ;
     glTranslatef(0.0f, -context.player.speed , 0.0f);
@@ -521,6 +532,10 @@ void animation (void) {
       context.player.height = 0 ;
       context.player.jumping = NOT_JUMPING ;
     }
+  }
+  if ((int)context.player.position < (int)(context.player.position+context.player.speed) &&
+      ((int)context.player.position) % 2 == 0) {
+    //printf ("verif\n") ;
   }
   context.bonus_rotation += 0.1 ;
   glutPostRedisplay () ;
