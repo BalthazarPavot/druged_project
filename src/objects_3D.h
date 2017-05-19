@@ -15,6 +15,9 @@
 #define BUILDING_DOOR_WIDTH 5
 #define BUILDING_DOOR_DEPTH 1
 
+#define SEWER 1
+#define SIGN  2
+
 
 typedef struct s_player_object_3D t_player_object_3D ;
 typedef t_player_object_3D* p_player_object_3D ;
@@ -132,8 +135,10 @@ void free_building_3D (void *building) ;
 p_obstacle_3D new_obstacle_3D () ;
 void init_obstacle_3D (p_obstacle_3D obstacle) ;
 void init_random_obstacle_3D (p_obstacle_3D obstacle) ;
+void init_random_sign (p_obstacle_3D obstacle) ;
 void generate_obstacle (p_obstacle_3D obstacle) ;
 void generate_stop_sign (p_obstacle_3D obstacle) ;
+void generate_sewer (p_obstacle_3D obstacle) ;
 void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int z) ;
 void free_obstacle_3D (void *obstacle) ;
 

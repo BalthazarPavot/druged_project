@@ -213,14 +213,22 @@ void init_random_obstacle_3D (p_obstacle_3D obstacle) {
   generate_obstacle (obstacle) ;
 }
 
+void init_random_sign (p_obstacle_3D obstacle) {
+  if (obstacle == NULL)
+    return ;
+  init_obstacle_3D (obstacle) ;
+  generate_stop_sign (obstacle) ;
+}
+
 void generate_obstacle (p_obstacle_3D obstacle) {
   if (obstacle == NULL)
     return ;
   switch (rand () % 3) {
     //case 0:
       //break ;
-    //case 1:
-      //break ;
+    case 1:
+      generate_sewer (obstacle) ;
+      break ;
     case 2:
     default:
       generate_stop_sign (obstacle) ;
@@ -236,6 +244,7 @@ void generate_stop_sign (p_obstacle_3D obstacle) {
 
   if (obstacle == NULL)
     return ;
+  obstacle->type = SIGN ;
   init_object_3D_cylinder (&pipe, 0, 0, 0, 1, 40) ;
   init_object_3D_cylinder (&sign1, 0, -2, 35, 8, 0.5) ;
   init_object_3D_cylinder (&sign2, 0, -3, 35, 7.5, 0.5) ;
@@ -257,10 +266,30 @@ void generate_stop_sign (p_obstacle_3D obstacle) {
   
 }
 
+void generate_sewer (p_obstacle_3D obstacle) {
+  t_object_3D sewer1 ;
+  t_object_3D sewer2 ;
+
+  if (obstacle == NULL)
+    return ;
+  obstacle->type = SEWER ;
+  init_object_3D_cylinder (&sewer1, -ROAD_SPAN / 4 + ROAD_SPAN / 3 - 4, 0, 1, 8, 1) ;
+  if (rand () % 2)
+    init_object_3D_cylinder (&sewer2, -ROAD_SPAN / 6 - 6, 0, 1, 8, 1) ;
+  else
+    init_object_3D_cylinder (&sewer2, ROAD_SPAN / 3, 0, 1, 8, 1) ;
+  set_object_3D_color (&sewer1, 1, 1, 1) ;
+  set_object_3D_color (&sewer2, 80, 44, 17) ;
+  push_chained_list (obstacle->objects, &sewer1, sizeof (t_object_3D)) ;
+  push_chained_list (obstacle->objects, &sewer2, sizeof (t_object_3D)) ;
+  
+}
+
 void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int z) {
   if (obstacle == NULL)
     return ;
-  obstacle->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 2 * (rand () % 2) : x ;
+  if (obstacle->type == SIGN)
+    obstacle->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 2 * (rand () % 2) : x ;
   obstacle->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
   obstacle->position.z = z == -1 ? 0 : z ;
   for_chained_list_value (obstacle->objects) {
@@ -269,6 +298,7 @@ void set_random_obstacle_3D_position (p_obstacle_3D obstacle, int x, int y, int 
     ((p_object_3D) value)->position.z += obstacle->position.z ;
   }
 }
+
 
 static void _free_obstacle_3D (p_obstacle_3D obstacle) {
   if (obstacle != NULL) {
@@ -304,7 +334,7 @@ void init_random_bonus_3D (p_bonus_3D bonus) {
 
   if (bonus == NULL)
     return ;
-  init_object_3D_cylinder (&pill, -5, 0, 12, 8, 1) ;
+  init_object_3D_cylinder (&pill, -5, 0, 15, 5, 1) ;
   set_object_3D_color (&pill, 255, 225, 20) ;
   pill.transform.angle_x = 90 ;
   pill.transform.angle_z = 90 ;
@@ -314,9 +344,18 @@ void init_random_bonus_3D (p_bonus_3D bonus) {
 void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
   if (bonus == NULL)
     return ;
-  bonus->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 3 * (rand () % 3) : x ;
+  if (x != -1)
+    bonus->position.x = x ;
+  else if (rand () % 6 == 0)
+    bonus->position.x = -ROAD_SPAN / 4 + ROAD_SPAN / 3 ;
+  else if (rand () % 2)
+    bonus->position.x = -ROAD_SPAN / 6 ;
+  else
+    bonus->position.x = ROAD_SPAN / 3 ;
+  //bonus->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 3 * (rand () % 3) : x ;
   bonus->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
-  bonus->position.z = z == -1 ? fabs (bonus->position.x) < ROAD_SPAN / 4 ? 20 : 0 : z ;
+  //bonus->position.z = z == -1 ? fabs (bonus->position.x) < ROAD_SPAN / 4 ? 20 : 0 : z ;
+  bonus->position.z = z == -1 ? 0 : z ;
   for_chained_list_value (bonus->objects) {
     ((p_object_3D) value)->position.x += bonus->position.x ;
     ((p_object_3D) value)->position.y += bonus->position.y ;
