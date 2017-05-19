@@ -111,7 +111,7 @@ void play_game () {
   glutSetWindow (context.window_id) ;
 
   glFrustum (-2, 2, -2, 2, 2, context.parameters.road_length) ;
-  gluLookAt (0, -60, 40, 0, 0, 0, 0, 0, 1) ;
+  gluLookAt (0, -60, 60, 0, 0, 0, 0, 0, 1) ;
 
   context.quadObj = gluNewQuadric();
 

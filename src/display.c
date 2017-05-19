@@ -414,8 +414,11 @@ void display_bonus (p_bonus_3D bonus) {
   if (fabs (bonus->position.y - context.player.position) > 500)
     return ;
   for_chained_list_value (bonus->objects) {
-    if (((p_object_3D)value)->display)
+    if (((p_object_3D)value)->display) {
+      ((p_object_3D)value)->transform.angle_y += context.bonus_rotation ;
       ((p_object_3D)value)->display (value) ;
+      ((p_object_3D)value)->transform.angle_y -= context.bonus_rotation ;
+    }
   }
 }
 
@@ -496,5 +499,6 @@ void animation (void) {
     if (context.player.position > context.parameters.road_length)
       exit_game () ;
   }
+  context.bonus_rotation += 0.1 ;
   glutPostRedisplay () ;
 }

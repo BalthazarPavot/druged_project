@@ -299,15 +299,29 @@ void init_bonus_3D (p_bonus_3D bonus) {
 }
 
 void init_random_bonus_3D (p_bonus_3D bonus) {
+  t_object_3D pill ;
   init_bonus_3D (bonus) ;
+
+  if (bonus == NULL)
+    return ;
+  init_object_3D_cylinder (&pill, -5, 0, 12, 8, 1) ;
+  set_object_3D_color (&pill, 255, 225, 20) ;
+  pill.transform.angle_x = 90 ;
+  pill.transform.angle_z = 90 ;
+  push_chained_list (bonus->objects, &pill, sizeof (t_object_3D)) ;
 }
 
 void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
   if (bonus == NULL)
     return ;
-  bonus->position.x = x == -1 ? (ROAD_SPAN/2 + 5) * (rand ()%2 ? 1 : -1) : x ;
+  bonus->position.x = x == -1 ? -ROAD_SPAN / 4 + ROAD_SPAN / 3 * (rand () % 3) : x ;
   bonus->position.y = y == -1 ? rand () % context.parameters.road_length : y ;
-  bonus->position.z = z == -1 ? 0 : z ;
+  bonus->position.z = z == -1 ? fabs (bonus->position.x) < ROAD_SPAN / 4 ? 20 : 0 : z ;
+  for_chained_list_value (bonus->objects) {
+    ((p_object_3D) value)->position.x += bonus->position.x ;
+    ((p_object_3D) value)->position.y += bonus->position.y ;
+    ((p_object_3D) value)->position.z += bonus->position.z ;
+  }
 }
 
 void set_object_3D_color (p_object_3D object, unsigned char r, unsigned char g, unsigned char b) {

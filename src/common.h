@@ -85,6 +85,7 @@ struct s_context {
   t_player player ;
   int argc ;
   int window_id ;
+  float bonus_rotation ;
 
 } ;
 
