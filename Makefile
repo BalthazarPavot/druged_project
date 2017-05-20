@@ -1,5 +1,5 @@
 
-DEBUG			=		0
+DEBUG			=		1
 
 RM 				=		rm -f
 

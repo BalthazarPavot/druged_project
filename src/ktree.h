@@ -6,7 +6,7 @@
 #define EMPTY NULL
 
 #define K 8
-#define MAX_DEPTH 8
+#define MAX_DEPTH 4
 
 #define LTF 0
 #define LTR 1
@@ -19,6 +19,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 
 typedef struct s_tree t_tree ;
@@ -30,8 +31,9 @@ struct s_tree {
 
 #include "objects_3D.h"
 
-p_tree new_tree () ;
-void free_tree (p_tree tree) ;
+
+t_tree *new_tree () ;
+//void free_tree (p_tree tree) ;
 p_tree ball_to_tree_bis (t_object_3D sphere, t_position_3D v1, t_position_3D v2, int depth) ;
 p_tree ball_to_tree (t_object_3D sphere) ;
 

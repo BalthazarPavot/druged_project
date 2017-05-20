@@ -1,125 +1,181 @@
 #include "ktree.h"
 
 
-void print_coord (t_position_3D pos) {
-  printf ("(%d ; %d ; %d)", pos.x, pos.y, pos.z) ;
+void print_t_position (t_position_3D pos) {
+  printf ("(%d ; %d ; %d)\n", pos.x, pos.y, pos.z) ;
+}
+
+t_position_3D copy_t_position (t_position_3D pos) {
+  t_position_3D new ;
+  
+  new.x = pos.x ;
+  new.y = pos.y ;
+  new.z = pos.z ;
+
+  return new;
+}
+
+float distance (t_position_3D a, t_position_3D b) {
+  return sqrt(pow((b.x - a.x), 2) + pow((b.y - a.y), 2) + pow((b.z - a.z), 2));
+}
+
+t_position_3D translate_t_position (t_position_3D pos_in, int x, int y, int z) {
+  
+  t_position_3D pos_out ;
+  
+  pos_out.x = pos_in.x + x ;
+  pos_out.y = pos_in.y + y ;
+  pos_out.z = pos_in.z + z ;
+  
+  return pos_out ;
+}
+
+t_position_3D copy_t_position_add (t_position_3D pos, int add) {
+  t_position_3D new ;
+  
+  new.x = pos.x + add ;
+  new.y = pos.y + add ;
+  new.z = pos.z + add ;
+
+  return new;
 }
 
 
-p_tree new_tree () {
-	p_tree tree ;
+t_tree *new_tree () {
+	t_tree *tree ;
 	
-	if ((tree = calloc (1, sizeof(t_tree))) == NULL) {
+	if ((tree = calloc (1, sizeof(t_tree))) == NULL) { /* TODO change it */ 
 		fprintf (stderr, "Not enough memory to create a tree (file:ktree.c)\n") ;
     exit_game () ;
 		exit(0) ;
 	}
-  /*
-	if ((tree->sub_tree = calloc (K, sizeof(t_tree))) == NULL) {
-		fprintf (stderr, "Not enough memory to create sub_tree field (file:ktree.c)\n") ;
-    exit_game () ;
-		exit(0) ;
-	}*/
-		
+  		
+	return tree ;
+}
+
+t_tree *new_empty () {
+	t_tree *tree ;
+  fprintf(stderr, "empty 1\n") ;
+	tree = new_tree () ;
+  fprintf(stderr, "empty 2\n") ;
+  tree->sub_tree = EMPTY ;
+  fprintf(stderr, "empty 3\n") ;
+  
 	return tree ;
 }
 
 
 
-void free_tree (p_tree tree) {
+void free_tree (t_tree *tree) {
 
 	if (tree != NULL) {
-		free_tree (tree->sub_tree) ;
+		free_tree (*(tree->sub_tree)) ;
     free (tree) ;
   }
 }
 
 /* Balls */
 
+int is_out_of_the_ball (int radius, t_position_3D center, t_position_3D v1, t_position_3D v2) {
+  if (radius < distance (center, v1) && radius < distance (center, v2))
+    return 1 ;
+  return 0 ;
+}
+
+int is_in_the_ball (int radius, t_position_3D center, t_position_3D v1, t_position_3D v2) {
+  if (radius >= distance (center, v1) &&   radius >= distance (center, v2))
+    return 1 ;
+  return 0 ;
+}
+
 p_tree ball_to_tree_bis (t_object_3D sphere, t_position_3D v1, t_position_3D v2, int depth) {
 
-  t_position_3D  v1_new, v2_new ;
+  print_t_position(v1) ;
+  print_t_position(v2);
+  fprintf(stderr, "Depth = %d/%d         %d       \n", depth, MAX_DEPTH, sphere.dimensions.radius) ;
+  if (depth >= MAX_DEPTH) {
+    return FULL;
+  }
+  
+  t_position_3D  v1_old, v2_old ;
   int n ;
-  
-  n = (v1.x - v2.x) / 2 ;
-  
-  fprintf(stderr, "Depth = %d/%d\n", depth, MAX_DEPTH) ;
-  if (depth >= MAX_DEPTH)
-    return tree;
 
+  p_tree tree ;
+  tree = new_tree () ;
+
+  v1_old = copy_t_position (v1) ;
+  v2_old = copy_t_position (v2) ;
+  
+  n = (v2_old.x - v1_old.x) / 2 ;
+  
   for (int i=0 ; i<K ; i++) {
+    fprintf(stderr, "switch\n") ;
+
     switch (i) {
       case LTF :
-        v2_new.x = v2.x - n ;
-        v1_new.y = v1.y + n ;
-        v2_new.z = v2.z - n ;
+        fprintf (stderr, "LTF\n");
+        v1 = translate_t_position (v1_old, 0, n, 0) ;
         break;
       case LTR :
-        v2_new.x = v2.x - n ;
-        v1_new.y = v1.y + n ;
-        v1_new.z = v1.z + n ; 
+        fprintf (stderr, "LTR\n");
+        v1 = translate_t_position (v1_old, 0, n, n) ;
         break;
       case LBF :
-        v2_new.x = v2.x - n ;
-        v2_new.y = v2.y - n ;
-        v2_new.z = v2.z - n ;
+        fprintf (stderr, "LBF\n");
+        v1 = translate_t_position (v1_old, 0, 0, 0) ;
         break;
       case LBR :
-        v2_new.x = v2.x - n ;
-        v2_new.y = v2.y - n ;
-        v2_new.z = v2.z - n ;
+        fprintf (stderr, "LBR\n");
+        v1 = translate_t_position (v1_old, 0, 0, n) ;
         break;
       case RTF :
-        v1_new.x = v1.x + n ;
-        v1_new.y = v1.y + n ;
-        v2_new.z = v2.z - n ;
+        fprintf (stderr, "RTF\n");
+        v1 = translate_t_position (v1_old, n, n, 0) ;
         break;
       case RTR :
-        v1_new.x = v1.x + n ;
-        v1_new.y = v1.y + n ;
-        v1_new.z = v1.z + n ;
+        fprintf (stderr, "RTR\n");
+        v1 = translate_t_position (v1_old, n, n, n) ;
         break;
       case RBF :
-        v1_new.x = v1.x + n ;
-        v2_new.y = v2.y - n ;
-        v2_new.z = v2.z - n ;
+        fprintf (stderr, "RBF\n");
+        v1 = translate_t_position (v1_old, n, 0, 0) ;
         break;
       case RBR :
-        v1_new.x = v1.x + n ;
-        v2_new.y = v2.y - n ;
-        v1_new.z = v1.z + n ;
+        fprintf (stderr, "RBR\n");
+        v1 = translate_t_position (v1_old, n, 0, n) ;
         break;
-      }
-      printf ("i = %d :\n", i) ;
-      print_coord(v1_new) ;
-      print_coord(v2_new) ;
-      /*
-    if(is_out_of_the_ball (radius, depth, center, vertex2))
-      tree->sub_tree[i] = EMPTY ;
-    else if (is_in_the_ball (diameter, center, depth, accuracy))
-      tree->sub_tree[i] = FULL ;
-    else {
+    }
       
-      tree->sub_tree[i] = ball_to_tree_bis (radius, ++depth, tree->sub_tree[i], center, vertex1, vertex2) ;
-    }*/
+    v2 = copy_t_position_add (v1, n) ;
+    print_t_position(v1) ;
+
+    if(is_out_of_the_ball (sphere.dimensions.radius, sphere.position, v1, v2)) {
+      fprintf(stderr, "out 1\n") ;
+      tree->sub_tree[i] = new_empty () ;
+      fprintf(stderr, "out 3\n") ;
+    } else if (is_in_the_ball (sphere.dimensions.radius, sphere.position, v1, v2)) {
+      fprintf(stderr, "in\n") ;
+      tree->sub_tree[i] = FULL ;
+    } else {
+      fprintf(stderr, "Sub_tree\n") ;
+      tree->sub_tree[i] = ball_to_tree_bis (sphere, v1, v2, ++depth) ;
+//    }
+    }
   }
-  return tree;
+  return tree ;
 }
 
 
 p_tree ball_to_tree (t_object_3D sphere) {
-  p_tree tree ;
-  tree = new_tree () ;
   
   t_position_3D v1, v2 ;
   
   v1.x = sphere.position.x - sphere.dimensions.radius ;
   v1.y = sphere.position.y - sphere.dimensions.radius ;
   v1.z = sphere.position.z - sphere.dimensions.radius ;
-  v2.x = sphere.position.x - sphere.dimensions.radius ;
-  v2.y = sphere.position.y - sphere.dimensions.radius ;
-  v2.z = sphere.position.z - sphere.dimensions.radius ;
-  
+  v2.x = sphere.position.x + sphere.dimensions.radius ;
+  v2.y = sphere.position.y + sphere.dimensions.radius ;
+  v2.z = sphere.position.z + sphere.dimensions.radius ;
   return ball_to_tree_bis (sphere, v1, v2, 1) ;
 }
 

@@ -82,8 +82,24 @@ int main (int argc, char *argv[]) {
   generate_default_context () ;
   parse_arguments (argc, argv) ;
   initialize_opengl () ;
-  generate_game () ;
-  play_game () ;
+  /*generate_game () ;
+  play_game () ;*/
+  
+  struct s_object_3D {
+  p_tree tree ;
+  p_display_object_3D_method display ;
+  t_position_3D position ;
+  t_dimension_3D dimensions ;
+  char type ;
+} ;
+
+  t_object_3D sphere ;
+  sphere.dimensions.radius = 50 ;
+  sphere.position.x = 100 ;
+  sphere.position.y = 100 ;
+  sphere.position.z = 100 ;
+  
+  ball_to_tree (sphere) ;
 
   return 0 ;
 }
