@@ -83,12 +83,14 @@ struct s_context {
   p_chained_list buildings ;
   p_chained_list obstacles ;
   p_chained_list bonus ;
+  p_chained_list got_bonus ;
   t_key_down key_down ;
   t_player player ;
   int argc ;
   int window_id ;
   float bonus_rotation ;
-
+  t_object_3D sight ;
+  char pause ;
 } ;
 
 

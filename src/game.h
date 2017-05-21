@@ -18,6 +18,7 @@
 #include "common.h"
 #include "event_handler.h"
 #include "objects_3D.h"
+#include "ktree.h"
 
 #define DISTANCE_REDUCTOR 1.
 

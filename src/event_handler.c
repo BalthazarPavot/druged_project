@@ -24,13 +24,18 @@ void handle_keyboard (unsigned char key, int x, int y) {
     case '\x1b': /* escape = '' = '\x1b' */
       exit_game () ;
       exit (0) ;
+    case ' ':
+      if (context.player.position < context.parameters.road_length+100)
+        context.pause = ! context.pause ;
     default:
-      x += y ; // not to be bitten by gcc
+      x += y ; // not to be bitten by gcc      
       break ;
   }
 }
 
 void handle_special (int key, int x, int y) {
+  if (context.pause)
+    return ;
   switch (key) {
     case GLUT_KEY_RIGHT:
       context.player.arms_position = ARMS_ON_RIGHT ;

@@ -36,6 +36,10 @@ void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radiu
   object->dimensions.radius = radius ;
   object->dimensions.height = height ;
   object->type = CYLINDRE ;
+
+#ifdef KTREE
+  add_tree_to_cylinder (object) ;
+#endif
 }
 
 void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, unsigned char r, unsigned char g, unsigned char b) {
@@ -53,8 +57,12 @@ void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, u
 
 static void _free_object_3D (p_object_3D object) {
   if (object != NULL) {
-    if (object->type == TEXT && object->tree != NULL)
-      free (object->tree) ;
+    if (object->tree != NULL) {
+      if (object->type == TEXT)
+        free (object->tree) ;
+      else
+        free_tree (object->tree) ;
+    }
     free (object) ;
   }
 }
@@ -361,6 +369,17 @@ void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
     ((p_object_3D) value)->position.x += bonus->position.x ;
     ((p_object_3D) value)->position.y += bonus->position.y ;
     ((p_object_3D) value)->position.z += bonus->position.z ;
+  }
+}
+
+void move_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
+  bonus->position.x += x ;
+  bonus->position.y += y ;
+  bonus->position.z += z ;
+  for_chained_list_value (bonus->objects) {
+    ((p_object_3D) value)->position.x += x ;
+    ((p_object_3D) value)->position.y += y ;
+    ((p_object_3D) value)->position.z += z ;
   }
 }
 
