@@ -537,6 +537,6 @@ void animation (void) {
       ((int)context.player.position) % 2 == 0) {
     //printf ("verif\n") ;
   }
-  context.bonus_rotation += 0.1 ;
+  context.bonus_rotation += 0.1 * SPEED_MULTIPLIER ;
   glutPostRedisplay () ;
 }

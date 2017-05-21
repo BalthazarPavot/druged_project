@@ -4,7 +4,6 @@
 
 
 #include "chained_list.h"
-#include "ktree.h"
 
 #define BUILDING_MIN_DIMENSION 20
 #define BUILDING_MAX_DIMENSION 60
@@ -48,6 +47,7 @@ typedef t_transform_3D* p_transform_3D ;
 
 typedef void *(*p_display_object_3D_method) (p_object_3D) ;
 
+#include "ktree.h"
 
 struct s_position_3D {
   float x ;
