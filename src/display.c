@@ -2,8 +2,6 @@
 
 #include "display.h"
 
-
-
 static void _display_cylinder (float base, float top, float height, float slices, float stacks) {
   glMatrixMode(GL_PROJECTION);
   gluCylinder (context.quadObj, base, top, height, slices, stacks);
@@ -102,6 +100,34 @@ static void _display_cube (float x, float y, float z, float dx, float dy, float 
 static void _display_real_cube (float x, float y, float z, float w) {
   _display_cube (x, y, z, w, w, w) ;
 }
+
+#ifdef KTREE
+static void _display_k_tree_with_cube_size (p_tree tree, float x, float y, float z, float cube_size) {
+  int dx, dy, dz ;
+
+  if (tree != EMPTY) {
+    if (tree == FULL) {
+      _display_real_cube (x, y, z, cube_size) ;
+    } else {
+      cube_size /= 2. ;
+      for (dz=0 ; dz < 2 ; dz += 1)
+        for (dy=0 ; dy < 2 ; dy += 1)
+          for (dx=0 ; dx < 2 ; dx += 1)
+            _display_k_tree_with_cube_size (tree->sub_tree[dx+dy*2+dz*4],
+              x+dx*cube_size, y+dy*cube_size, z+dz*cube_size, cube_size) ;
+    }
+  }
+}
+
+static void _display_k_tree (p_object_3D object) {
+  if (object->type == CYLINDRE) {
+    _display_k_tree_with_cube_size (
+      object->tree, 0, 0, 0,
+      fmax (object->dimensions.radius * 2, object->dimensions.height)
+    ) ;
+  }
+}
+#endif
 
 static void _display_vehicle () {
   glColor3f(170./255, 97./255, 41./255);
@@ -330,18 +356,28 @@ void *display_cylinder (p_object_3D cylinder) {
   if (cylinder->color.r || cylinder->color.g ||cylinder->color.b) {
     glColor3f(cylinder->color.r/255.0, cylinder->color.g/255.0, cylinder->color.b/255.0);
   }
+  
+#ifdef KTREE
+  glTranslatef (cylinder->position.x+cylinder->dimensions.radius, cylinder->position.y, cylinder->position.z-cylinder->dimensions.radius) ;
+#else
   glTranslatef (cylinder->position.x, cylinder->position.y, cylinder->position.z) ;
+#endif
+
   if (cylinder->transform.angle_x)
     glRotatef (cylinder->transform.angle_x, 1, 0, 0) ;
   if (cylinder->transform.angle_y)
     glRotatef (cylinder->transform.angle_y, 0, 1, 0) ;
   if (cylinder->transform.angle_z)
     glRotatef (cylinder->transform.angle_z, 0, 0, 1) ;
+#ifdef KTREE
+  _display_k_tree (cylinder) ;
+#else 
   _display_default_cylinder (cylinder->dimensions.radius, cylinder->dimensions.radius,
     cylinder->dimensions.height) ;
   gluDisk (context.quadObj, 0, cylinder->dimensions.radius, 16, 16) ;
   glTranslatef (0, 0, cylinder->dimensions.height);
   gluDisk (context.quadObj, 0, cylinder->dimensions.radius, 16, 16) ;
+#endif
   glPopMatrix () ;
   return cylinder ;
 }

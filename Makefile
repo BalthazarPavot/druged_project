@@ -25,6 +25,10 @@ ifeq ($(DEBUG),1)
 	CFLAGS	+=	-g
 endif
 
+ifeq ($(KTREE),1)
+	CFLAGS	+=	-DKTREE
+endif
+
 
 
 all						:	$(TARGET)

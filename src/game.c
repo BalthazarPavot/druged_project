@@ -18,6 +18,8 @@ void generate_default_context () {
   context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
   context.player.speed = BASE_SPEED ;
+  context.sight.dimensions.width = 200 ;
+  context.sight.dimensions.height = 100 ;
 }
 
 void initialize_opengl () {
@@ -129,6 +131,8 @@ void destroyContext () {
   context.bonus = NULL ;
   if (context.quadObj != NULL)
     gluDeleteQuadric(context.quadObj);
+  if (context.sight.tree != NULL)
+    free_tree (context.sight.tree) ;
 }
 
 void exit_game () {

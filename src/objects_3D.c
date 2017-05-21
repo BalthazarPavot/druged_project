@@ -36,6 +36,10 @@ void init_object_3D_cylinder (p_object_3D object, int x, int y, int z, int radiu
   object->dimensions.radius = radius ;
   object->dimensions.height = height ;
   object->type = CYLINDRE ;
+
+#ifdef KTREE
+  add_tree_to_cylinder (object) ;
+#endif
 }
 
 void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, unsigned char r, unsigned char g, unsigned char b) {
@@ -53,8 +57,12 @@ void init_object_3D_text (p_object_3D object, int x, int y, int z, char *text, u
 
 static void _free_object_3D (p_object_3D object) {
   if (object != NULL) {
-    if (object->type == TEXT && object->tree != NULL)
-      free (object->tree) ;
+    if (object->tree != NULL) {
+      if (object->type == TEXT)
+        free (object->tree) ;
+      else
+        free_tree (object->tree) ;
+    }
     free (object) ;
   }
 }

@@ -88,7 +88,7 @@ struct s_context {
   int argc ;
   int window_id ;
   float bonus_rotation ;
-
+  t_object_3D sight ;
 } ;
 
 
