@@ -1,46 +1,5 @@
 #include "ktree.h"
 
-
-void print_t_position (t_position_3D pos) {
-  printf ("(%d ; %d ; %d)\n", pos.x, pos.y, pos.z) ;
-}
-
-t_position_3D copy_t_position (t_position_3D pos) {
-  t_position_3D new ;
-  
-  new.x = pos.x ;
-  new.y = pos.y ;
-  new.z = pos.z ;
-
-  return new;
-}
-
-float distance (t_position_3D a, t_position_3D b) {
-  return sqrt(pow((b.x - a.x), 2) + pow((b.y - a.y), 2) + pow((b.z - a.z), 2));
-}
-
-t_position_3D translate_t_position (t_position_3D pos_in, int x, int y, int z) {
-  
-  t_position_3D pos_out ;
-  
-  pos_out.x = pos_in.x + x ;
-  pos_out.y = pos_in.y + y ;
-  pos_out.z = pos_in.z + z ;
-  
-  return pos_out ;
-}
-
-t_position_3D copy_t_position_add (t_position_3D pos, int add) {
-  t_position_3D new ;
-  
-  new.x = pos.x + add ;
-  new.y = pos.y + add ;
-  new.z = pos.z + add ;
-
-  return new;
-}
-
-
 t_tree *new_tree () {
 	t_tree *tree ;
 	
@@ -53,133 +12,164 @@ t_tree *new_tree () {
 	return tree ;
 }
 
-t_tree *new_empty () {
-	t_tree *tree ;
-  fprintf(stderr, "empty 1\n") ;
-	tree = new_tree () ;
-  fprintf(stderr, "empty 2\n") ;
-  tree->sub_tree = EMPTY ;
-  fprintf(stderr, "empty 3\n") ;
-  
-	return tree ;
-}
-
-
-
-void free_tree (t_tree *tree) {
+void free_tree (p_tree tree) {
 
 	if (tree != NULL) {
-		free_tree (*(tree->sub_tree)) ;
+    for (int i=0 ; i < K ; i++)
+      free_tree (tree->sub_tree[i]) ;
     free (tree) ;
   }
 }
 
-/* Balls */
-
-int is_out_of_the_ball (int radius, t_position_3D center, t_position_3D v1, t_position_3D v2) {
-  if (radius < distance (center, v1) && radius < distance (center, v2))
-    return 1 ;
-  return 0 ;
+float distancef_3D (float x1, float y1, float z1,
+                    float x2, float y2, float z2 ) {
+  return sqrt (pow (x2 - x1, 2) + pow (y2 - y1, 2) + pow (z2 - z1, 2)) ;
 }
 
-int is_in_the_ball (int radius, t_position_3D center, t_position_3D v1, t_position_3D v2) {
-  if (radius >= distance (center, v1) &&   radius >= distance (center, v2))
-    return 1 ;
-  return 0 ;
-}
+static void _add_tree_to_object ( p_object_3D object,
+                                  char      (*object_status)(p_object_3D, float, float, float),
+                                  float       cube_x,
+                                  float       cube_y,
+                                  float       cube_z,
+                                  float       size,
+                                  char        depth) {
+  int x ;
+  int y ;
+  int z ;
+  char status ;
 
-p_tree ball_to_tree_bis (t_object_3D sphere, t_position_3D v1, t_position_3D v2, int depth) {
-
-  print_t_position(v1) ;
-  print_t_position(v2);
-  fprintf(stderr, "Depth = %d/%d         %d       \n", depth, MAX_DEPTH, sphere.dimensions.radius) ;
-  if (depth >= MAX_DEPTH) {
-    return FULL;
-  }
-  
-  t_position_3D  v1_old, v2_old ;
-  int n ;
-
-  p_tree tree ;
-  tree = new_tree () ;
-
-  v1_old = copy_t_position (v1) ;
-  v2_old = copy_t_position (v2) ;
-  
-  n = (v2_old.x - v1_old.x) / 2 ;
-  
-  for (int i=0 ; i<K ; i++) {
-    fprintf(stderr, "switch\n") ;
-
-    switch (i) {
-      case LTF :
-        fprintf (stderr, "LTF\n");
-        v1 = translate_t_position (v1_old, 0, n, 0) ;
-        break;
-      case LTR :
-        fprintf (stderr, "LTR\n");
-        v1 = translate_t_position (v1_old, 0, n, n) ;
-        break;
-      case LBF :
-        fprintf (stderr, "LBF\n");
-        v1 = translate_t_position (v1_old, 0, 0, 0) ;
-        break;
-      case LBR :
-        fprintf (stderr, "LBR\n");
-        v1 = translate_t_position (v1_old, 0, 0, n) ;
-        break;
-      case RTF :
-        fprintf (stderr, "RTF\n");
-        v1 = translate_t_position (v1_old, n, n, 0) ;
-        break;
-      case RTR :
-        fprintf (stderr, "RTR\n");
-        v1 = translate_t_position (v1_old, n, n, n) ;
-        break;
-      case RBF :
-        fprintf (stderr, "RBF\n");
-        v1 = translate_t_position (v1_old, n, 0, 0) ;
-        break;
-      case RBR :
-        fprintf (stderr, "RBR\n");
-        v1 = translate_t_position (v1_old, n, 0, n) ;
-        break;
-    }
-      
-    v2 = copy_t_position_add (v1, n) ;
-    print_t_position(v1) ;
-
-    if(is_out_of_the_ball (sphere.dimensions.radius, sphere.position, v1, v2)) {
-      fprintf(stderr, "out 1\n") ;
-      tree->sub_tree[i] = new_empty () ;
-      fprintf(stderr, "out 3\n") ;
-    } else if (is_in_the_ball (sphere.dimensions.radius, sphere.position, v1, v2)) {
-      fprintf(stderr, "in\n") ;
-      tree->sub_tree[i] = FULL ;
-    } else {
-      fprintf(stderr, "Sub_tree\n") ;
-      tree->sub_tree[i] = ball_to_tree_bis (sphere, v1, v2, ++depth) ;
-//    }
+  if (depth >= MAX_DEPTH)
+    return ;
+  size /= 2. ;
+  for (x=0 ; x <= 1 ; x+=1) {
+    for (y=0 ; y <= 1 ; y+=1) {
+      for (z=0 ; z <= 1 ; z+=1) {
+        status = cube_status (
+          object, object_status, cube_x+x*size,
+          cube_y+y*size, cube_z+z*size, size
+        ) ;
+        if (status == OUT)
+          object->tree->sub_tree[x*4 + y*2 + z] = EMPTY ;
+        else {
+          object->tree->sub_tree[x*4 + y*2 + z] = FULL ;
+          if (status == OVERLAP)
+            _add_tree_to_object (
+              object, object_status, cube_x+x*size,
+              cube_y+y*size, cube_z+z*size, size, depth+1
+            ) ;
+        }
+      }
     }
   }
-  return tree ;
 }
 
+char cube_status (p_object_3D object,
+                  char      (*status)(p_object_3D, float, float, float),
+                  float       cube_x,
+                  float       cube_y,
+                  float       cube_z,
+                  float       size) {
+  int x, y, z, sum ;
 
-p_tree ball_to_tree (t_object_3D sphere) {
-  
-  t_position_3D v1, v2 ;
-  
-  v1.x = sphere.position.x - sphere.dimensions.radius ;
-  v1.y = sphere.position.y - sphere.dimensions.radius ;
-  v1.z = sphere.position.z - sphere.dimensions.radius ;
-  v2.x = sphere.position.x + sphere.dimensions.radius ;
-  v2.y = sphere.position.y + sphere.dimensions.radius ;
-  v2.z = sphere.position.z + sphere.dimensions.radius ;
-  return ball_to_tree_bis (sphere, v1, v2, 1) ;
+  sum = 0 ;
+  for (x=0 ; x <= size ; x+=size) {
+    for (y=0 ; y <= size ; y+=size) {
+      for (z=0 ; z <= size ; z+=size) {
+        if (status (object, cube_x + x, cube_y + y, cube_z + z))
+          sum+=1 ;
+      }
+    }
+  }
+  if (sum == 0)
+    return OUT ;
+  else if (sum == 8)
+    return INTO ;
+  return OVERLAP ;
 }
 
+/* Sphere */
 
+char cube_status_sphere ( p_object_3D sphere,
+                          float       cube_x,
+                          float       cube_y,
+                          float       cube_z) {
+  return distancef_3D (
+    cube_x, cube_y, cube_z,
+    sphere->position.x, sphere->position.y,
+    sphere->position.z) < sphere->dimensions.radius ;
+}
 
+void add_tree_to_sphere (p_object_3D sphere) {
 
+  _add_tree_to_object (
+    sphere,
+    cube_status_sphere,
+    sphere->position.x - sphere->dimensions.radius, 
+    sphere->position.y - sphere->dimensions.radius, 
+    sphere->position.z - sphere->dimensions.radius, 
+    sphere->dimensions.radius * 2,
+    0
+  ) ;
 
+}
+
+/* Tile */
+
+char cube_status_tile ( p_object_3D tile,
+                          float       cube_x,
+                          float       cube_y,
+                          float       cube_z) {
+  return  (
+    cube_x >= tile->position.x && cube_x <= tile->position.x + tile->dimensions.width &&
+    cube_y >= tile->position.y && cube_y <= tile->position.y + tile->dimensions.depth &&
+    cube_z >= tile->position.z && cube_z <= tile->position.z + tile->dimensions.height
+  ) ;
+}
+
+void add_tree_to_tile (p_object_3D tile) {
+  float cube_size ;
+
+  cube_size = fmax (tile->dimensions.width, tile->dimensions.depth) ;
+  cube_size = fmax (cube_size, tile->dimensions.height) ;
+  _add_tree_to_object (
+    tile,
+    cube_status_tile,
+    tile->position.x - tile->dimensions.width, 
+    tile->position.y - tile->dimensions.depth, 
+    tile->position.z - tile->dimensions.height, 
+    cube_size,
+    0
+  ) ;
+}
+
+/* Cylinder */
+
+char cube_status_cylinder ( p_object_3D cylinder,
+                          float       cube_x,
+                          float       cube_y,
+                          float       cube_z) {
+  return  (
+    cube_x >= cylinder->position.x - cylinder->dimensions.radius && 
+      cube_x <= cylinder->position.x + cylinder->dimensions.radius &&
+    cube_y >= cylinder->position.y - cylinder->dimensions.radius &&
+      cube_y <= cylinder->position.y + cylinder->dimensions.radius &&
+    cube_z >= cylinder->position.z &&
+      cube_z <= cylinder->position.z + cylinder->dimensions.height
+  ) ;
+}
+
+void add_tree_to_cylinder (p_object_3D cylinder) {
+  float cube_size ;
+
+  cube_size = fmax (cylinder->dimensions.width, cylinder->dimensions.depth) ;
+  cube_size = fmax (cube_size, cylinder->dimensions.height) ;
+  _add_tree_to_object (
+    cylinder,
+    cube_status_cylinder,
+    cylinder->position.x - cylinder->dimensions.width, 
+    cylinder->position.y - cylinder->dimensions.depth, 
+    cylinder->position.z - cylinder->dimensions.height, 
+    cube_size,
+    0
+  ) ;
+}

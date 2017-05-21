@@ -10,13 +10,14 @@ void generate_default_context () {
   context.obstacles = new_chained_list () ;
   context.bonus = new_chained_list () ;
   set_chained_list_free_chain_value (context.buildings, free_building_3D) ;
-  set_chained_list_free_chain_value (context.obstacles, free_object_3D) ;
+  set_chained_list_free_chain_value (context.obstacles, free_obstacle_3D) ;
   set_chained_list_free_chain_value (context.bonus, free_bonus_3D) ;
-  context.parameters.bonus_frequency = 0.35 ;
+  context.parameters.bonus_frequency = 0.1 ;
   context.parameters.building_frequency = 0.3 ;
-  context.parameters.obstacle_frequency = 0.25 ;
-  context.parameters.road_length = 1000 ;
+  context.parameters.obstacle_frequency = 0.007 + context.parameters.bonus_frequency;
+  context.parameters.road_length = 50000 ;
   context.game_state.road_begin_animation_y = -52.5 ;
+  context.player.speed = BASE_SPEED ;
 }
 
 void initialize_opengl () {
@@ -34,16 +35,16 @@ void parse_arguments (int argc, char *argv[]) {
   context.argc = argc ;
   context.argv = argv ;
   if (argc > 1)
-    context.parameters.road_length = atoi (argv[1]) ;
+    context.parameters.road_length = fmax (atoi (argv[1]), 1000) ;
   else
-    context.parameters.road_length = 1500 ;
+    context.parameters.road_length = 50000 ;
 }
 
 void generate_game () {
   srand(time(NULL)) ;
   generate_buildings (context.parameters.building_frequency, context.parameters.road_length) ;
-  generate_obstacles (context.parameters.obstacle_frequency, context.parameters.road_length) ;
-  generate_bonus (context.parameters.bonus_frequency, context.parameters.road_length) ;
+  generate_obstacles_n_bonus (context.parameters.obstacle_frequency, context.parameters.road_length) ;
+  //generate_bonus (context.parameters.bonus_frequency, context.parameters.road_length) ;
   printf ("%d buildings\n%d obstacles\n%d bonus\n",
     length_chained_list (context.buildings), 
     length_chained_list (context.obstacles), 
@@ -52,48 +53,50 @@ void generate_game () {
 }
 
 void generate_buildings (float frequency, int length) {
-  for (int distance=0 ; distance < length ; distance += 1)
+  for (int distance=100 ; distance < length ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
-      distance += add_new_building () ;
+      distance += add_new_building (distance) + BUILDING_STEP_DIMENSION * 2 ;
 }
 
-int add_new_building () {
-  p_building_3D building ;
+int add_new_building (int distance) {
+  t_building_3D building ;
 
-  building = new_building_3D () ;
-  push_chained_list (context.buildings, building, sizeof (t_building_3D)) ;
-  building->dimensions.depth = 50 ;
-  return building->dimensions.depth ;
+  init_random_building_3D (&building) ;
+  set_random_building_3D_position (&building, -1, distance, -1) ;
+  generate_details (&building) ;
+  push_chained_list (context.buildings, &building, sizeof (t_building_3D)) ;
+  return building.dimensions.depth ;
 }
 
-void generate_obstacles (float frequency, int length) {
-  for (int distance=0 ; distance < length ; distance += 1)
-    if (rand() / RAND_MAX < frequency)
-      distance += add_new_obstacle () ;
+void generate_obstacles_n_bonus (float frequency, int length) {
+  for (int distance=100 ; distance < length ; distance += 1)
+    if ((double)rand() / (double)RAND_MAX < frequency)
+      distance += rand () % 2 ? add_new_obstacle (distance) : add_new_bonus (distance) ;
 }
 
-int add_new_obstacle () {
-  p_obstacle_3D obstacle ;
+int add_new_obstacle (int distance) {
+  t_obstacle_3D obstacle ;
+  p_chain last_obstacle ;
 
-  obstacle = new_obstacle_3D () ;
-  push_chained_list (context.obstacles, obstacle, sizeof (t_obstacle_3D)) ;
-  obstacle->dimensions.depth = 10 ;
-  return obstacle->dimensions.depth ;
+  last_obstacle = chained_list_last (context.obstacles) ;
+  if (last_obstacle != NULL &&
+      ((p_obstacle_3D)last_obstacle->value)->type == SIGN)
+    init_random_obstacle_3D (&obstacle) ;
+  else
+    init_random_sign (&obstacle) ;
+  set_random_obstacle_3D_position (&obstacle, -1, distance, -1) ;
+  push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
+  //return obstacle.dimensions.depth ;
+  return (obstacle.type == SIGN ? 20 : 50) / DISTANCE_REDUCTOR ;
 }
 
-void generate_bonus (float frequency, int length) {
-  for (int distance=0 ; distance < length ; distance += 1)
-    if (rand() / RAND_MAX < frequency)
-      distance += add_new_bonus () ;
-}
+int add_new_bonus (int distance) {
+  t_bonus_3D bonus ;
 
-int add_new_bonus () {
-  p_bonus_3D bonus ;
-
-  bonus = new_bonus_3D () ;
-  push_chained_list (context.bonus, bonus, sizeof (t_bonus_3D)) ;
-  bonus->dimensions.depth = 10 ;
-  return bonus->dimensions.depth ;
+  init_random_bonus_3D (&bonus) ;
+  set_random_bonus_3D_position (&bonus, -1, distance, -1) ;
+  push_chained_list (context.bonus, &bonus, sizeof (t_bonus_3D)) ;
+  return 20 / DISTANCE_REDUCTOR ;
 }
 
 void play_game () {
@@ -118,22 +121,10 @@ void play_game () {
 }
 
 void destroyContext () {
-  //for_chained_list_value_of_type (context.buildings, p_building_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.buildings) ;
   context.buildings = NULL ;
-  //for_chained_list_value_of_type (context.obstacles, p_obstacle_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.obstacles) ;
   context.obstacles = NULL ;
-  //for_chained_list_value_of_type (context.bonus, p_bonus_3D) {
-    //free_chained_list (value->objects) ;
-    //value->objects = NULL ;
-  //}
   free_chained_list (context.bonus) ;
   context.bonus = NULL ;
   if (context.quadObj != NULL)

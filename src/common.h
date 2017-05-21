@@ -10,6 +10,22 @@
 
 #define TITLE "Drug! Drug! Drug! Drug!"
 
+#define ROAD_SPAN 60
+#define ROAD_MID_SPAN ROAD_SPAN / 2
+
+#define WHEEl_RAY 3
+#define WHEEl_HEIGHT WHEEL_RAY * 2
+
+#define VEHICLE_WIDTH ROAD_SPAN / 6
+#define VEHICLE_LENGTH ROAD_SPAN / 4
+#define VEHICLE_HEIGHT 10
+
+#define VEHICLE_POS_X -VEHICLE_WIDTH/2
+#define VEHICLE_POS_Y -40
+#define VEHICLE_POS_Z WHEEl_RAY
+
+#define VEHICLE_THICKNESS 1.5
+
 
 typedef struct s_context t_context ;
 typedef t_context* p_context ;
@@ -37,9 +53,12 @@ struct s_parameters {
 struct s_player {
   int score ;
   int score_multiplier ;
+  float height ;
   float position ; /* relatively to the road length */
+  float speed ;
   t_player_object_3D object ;
   char arms_position ;
+  char jumping ;
 } ;
 
 struct s_game_state {
@@ -68,6 +87,8 @@ struct s_context {
   t_player player ;
   int argc ;
   int window_id ;
+  float bonus_rotation ;
+
 } ;
 
 
