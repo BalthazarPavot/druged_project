@@ -358,7 +358,8 @@ void *display_cylinder (p_object_3D cylinder) {
   }
   
 #ifdef KTREE
-  glTranslatef (cylinder->position.x+cylinder->dimensions.radius, cylinder->position.y, cylinder->position.z-cylinder->dimensions.radius) ;
+  //glTranslatef (cylinder->position.x+cylinder->dimensions.radius, cylinder->position.y, cylinder->position.z-cylinder->dimensions.radius) ;
+  glTranslatef (cylinder->position.x, cylinder->position.y, cylinder->position.z) ;
 #else
   glTranslatef (cylinder->position.x, cylinder->position.y, cylinder->position.z) ;
 #endif
@@ -452,7 +453,23 @@ void display_obstacle (p_obstacle_3D obstacle) {
     return ;
   for_chained_list_value (obstacle->objects) {
     if (((p_object_3D)value)->display) {
+#ifdef KTREE
+      if (obstacle->type == SIGN) {
+        ((p_object_3D)value)->position.x+=((p_object_3D)value)->dimensions.radius ;
+        ((p_object_3D)value)->position.z-=((p_object_3D)value)->dimensions.radius ;
+        ((p_object_3D)value)->display (value) ;
+        ((p_object_3D)value)->position.x-=((p_object_3D)value)->dimensions.radius ;
+        ((p_object_3D)value)->position.z+=((p_object_3D)value)->dimensions.radius ;
+      } else {
+        ((p_object_3D)value)->position.x-=10 ;
+        ((p_object_3D)value)->position.z-=1 ;
+        ((p_object_3D)value)->display (value) ;
+        ((p_object_3D)value)->position.x+=10 ;
+        ((p_object_3D)value)->position.z+=1 ;
+      }
+#else
       ((p_object_3D)value)->display (value) ;
+#endif
     }
   }
 }
@@ -462,9 +479,15 @@ void display_bonus (p_bonus_3D bonus) {
     return ;
   for_chained_list_value (bonus->objects) {
     if (((p_object_3D)value)->display) {
+#ifdef KTREE
+      ((p_object_3D)value)->position.x += 2 ;
+#endif
       ((p_object_3D)value)->transform.angle_y += context.bonus_rotation ;
       ((p_object_3D)value)->display (value) ;
       ((p_object_3D)value)->transform.angle_y -= context.bonus_rotation ;
+#ifdef KTREE
+      ((p_object_3D)value)->position.x -= 2 ;
+#endif
     }
   }
 }

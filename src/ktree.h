@@ -5,7 +5,7 @@
 #define EMPTY NULL
 
 #define K 8
-#define MAX_DEPTH 2
+#define MAX_DEPTH 3
 
 #define INTO 1
 #define OUT  2

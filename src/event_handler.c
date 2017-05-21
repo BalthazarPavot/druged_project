@@ -52,6 +52,8 @@ void handle_special (int key, int x, int y) {
       break ;
     case GLUT_KEY_DOWN:
       context.player.arms_position = ARMS_INTO_VEHICLE ;
+      if (context.player.jumping == JUMP_ASCENTION)
+        context.player.jumping = JUMP_DESCENT ;
       break ;
     default:
       printf ("Unknown key: %c\n", key) ;
