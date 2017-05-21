@@ -146,6 +146,7 @@ p_bonus_3D new_bonus_3D () ;
 void init_bonus_3D (p_bonus_3D bonus) ;
 void init_random_bonus_3D (p_bonus_3D bonus) ;
 void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) ;
+void move_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) ;
 void set_object_3D_color (p_object_3D object, unsigned char r, unsigned char g, unsigned char b) ;
 void free_bonus_3D (void *bonus) ;
 

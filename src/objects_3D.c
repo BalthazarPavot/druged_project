@@ -372,6 +372,17 @@ void set_random_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
   }
 }
 
+void move_bonus_3D_position (p_bonus_3D bonus, int x, int y, int z) {
+  bonus->position.x += x ;
+  bonus->position.y += y ;
+  bonus->position.z += z ;
+  for_chained_list_value (bonus->objects) {
+    ((p_object_3D) value)->position.x += x ;
+    ((p_object_3D) value)->position.y += y ;
+    ((p_object_3D) value)->position.z += z ;
+  }
+}
+
 void set_object_3D_color (p_object_3D object, unsigned char r, unsigned char g, unsigned char b) {
   object->color.r = r ;
   object->color.g = g ;

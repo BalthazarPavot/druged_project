@@ -9,6 +9,7 @@ void generate_default_context () {
   context.buildings = new_chained_list () ;
   context.obstacles = new_chained_list () ;
   context.bonus = new_chained_list () ;
+  context.got_bonus = new_chained_list () ;
   set_chained_list_free_chain_value (context.buildings, free_building_3D) ;
   set_chained_list_free_chain_value (context.obstacles, free_obstacle_3D) ;
   set_chained_list_free_chain_value (context.bonus, free_bonus_3D) ;
@@ -46,16 +47,16 @@ void generate_game () {
   srand(time(NULL)) ;
   generate_buildings (context.parameters.building_frequency, context.parameters.road_length) ;
   generate_obstacles_n_bonus (context.parameters.obstacle_frequency, context.parameters.road_length) ;
-  //generate_bonus (context.parameters.bonus_frequency, context.parameters.road_length) ;
   printf ("%d buildings\n%d obstacles\n%d bonus\n",
     length_chained_list (context.buildings), 
     length_chained_list (context.obstacles), 
     length_chained_list (context.bonus)
   ) ;
+  context.pause = 1 ;
 }
 
 void generate_buildings (float frequency, int length) {
-  for (int distance=100 ; distance < length ; distance += 1)
+  for (int distance=100 ; distance < length + 5000 ; distance += 1)
     if ((double)rand() / (double)RAND_MAX < frequency)
       distance += add_new_building (distance) + BUILDING_STEP_DIMENSION * 2 ;
 }
@@ -88,7 +89,6 @@ int add_new_obstacle (int distance) {
     init_random_sign (&obstacle) ;
   set_random_obstacle_3D_position (&obstacle, -1, distance, -1) ;
   push_chained_list (context.obstacles, &obstacle, sizeof (t_obstacle_3D)) ;
-  //return obstacle.dimensions.depth ;
   return (obstacle.type == SIGN ? 20 : 50) / DISTANCE_REDUCTOR ;
 }
 
@@ -129,6 +129,8 @@ void destroyContext () {
   context.obstacles = NULL ;
   free_chained_list (context.bonus) ;
   context.bonus = NULL ;
+  free_chained_list (context.got_bonus) ;
+  context.got_bonus = NULL ;
   if (context.quadObj != NULL)
     gluDeleteQuadric(context.quadObj);
   if (context.sight.tree != NULL)

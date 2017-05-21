@@ -523,6 +523,50 @@ void display_informations () {
   print (-15, -50, 3, text_buffer) ;
 }
 
+char handle_obstacle_collisions (p_obstacle_3D obstacle, float position_begin, float position_end) {
+  if (obstacle->position.y < position_begin)
+    return 1 ;
+  else if (obstacle->position.y > position_end)
+    return 0 ;
+  if (obstacle->type == SEWER) {
+    if (context.player.jumping == 0)
+      context.player.score -= 3 ;
+  } else {
+    if (obstacle->position.x > 10) {
+      if (context.player.arms_position == ARMS_ON_RIGHT)
+        context.player.score -= 3 ;
+    } else {
+      if (context.player.arms_position == ARMS_ON_LEFT)
+        context.player.score -= 3 ;
+    }
+  }
+  return 1 ;
+}
+
+char handle_bonus_collisions (p_bonus_3D bonus, float position_begin, float position_end) {
+  if (bonus->position.y < position_begin)
+    return 1 ;
+  else if (bonus->position.y > position_end)
+    return 0 ;
+  if (bonus->position.x > 5) {
+    if (context.player.arms_position == ARMS_ON_RIGHT) {
+      context.player.score += 1 ;
+      return 2 ;
+    }
+  } else if (bonus->position.x < -5) {
+    if (context.player.arms_position == ARMS_ON_LEFT) {
+      context.player.score += 1 ;
+      return 2 ;
+    }
+  } else {
+    if (context.player.arms_position == ARMS_INTO_VEHICLE) {
+      context.player.score += 1 ;
+      return 2 ;
+    }
+  }
+  return 1 ;
+}
+
 void display_screen (void) {
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) ;
   glMatrixMode (GL_MODELVIEW) ;
@@ -538,22 +582,26 @@ void display_screen (void) {
 }
 
 void animation (void) {
+  float position_begin ;
+  float position_end ;
+  char got_piece ;
+
+  position_begin = context.player.position - VEHICLE_LENGTH ;
   if (!context.game_state.vrooming) {
-    //context.game_state.road_begin_animation_y += context.parameters.road_length / 1500. ;
-    //context.game_state.bg_begin_animation_x += context.parameters.road_length / 1500. ;
-    //context.game_state.bg_begin_animation_y += context.parameters.road_length / 1500. ;
-    //if (context.game_state.bg_begin_animation_x >= context.parameters.road_length)
-    context.game_state.road_begin_animation_y = context.parameters.road_length ;
-    context.game_state.bg_begin_animation_x = context.parameters.road_length ;
-    context.game_state.bg_begin_animation_y = context.parameters.road_length ;
+    context.game_state.road_begin_animation_y = context.parameters.road_length +5000;
+    context.game_state.bg_begin_animation_x = context.parameters.road_length +5000;
+    context.game_state.bg_begin_animation_y = context.parameters.road_length +5000;
       context.game_state.vrooming = 100 ;
   } else {
-    context.player.position += context.player.speed ;
-    glTranslatef(0.0f, -context.player.speed , 0.0f);
-    if (context.player.speed < MAX_SPEED && (int )context.player.position % 50 == 0)
-      context.player.speed += SPEED_INCREASE ;
-    if (context.player.position > context.parameters.road_length)
-      exit_game () ;
+    if (context.pause == 0) {
+      context.player.position += context.player.speed ;
+      glTranslatef(0.0f, -context.player.speed , 0.0f);
+      if (context.player.speed < MAX_SPEED && (int )context.player.position % 50 == 0)
+        context.player.speed += SPEED_INCREASE ;
+      if (context.player.position >= context.parameters.road_length+100) {
+        context.pause = 1 ;
+      }
+    }
   }
   if (context.player.jumping == JUMP_ASCENTION) {
     context.player.height += JUMP_HEIGHT/(40.0f/context.player.speed);
@@ -569,9 +617,27 @@ void animation (void) {
       context.player.jumping = NOT_JUMPING ;
     }
   }
-  if ((int)context.player.position < (int)(context.player.position+context.player.speed) &&
-      ((int)context.player.position) % 2 == 0) {
-    //printf ("verif\n") ;
+  for_chained_list_value (context.got_bonus) {
+    if ((*((p_bonus_3D*)value))->position.z < 200) {
+      move_bonus_3D_position ((*((p_bonus_3D*)value)), 0, context.player.speed/2.0, 1) ;
+      if ((*((p_bonus_3D*)value))->position.z > 200)
+        (*((p_bonus_3D*)value))->position.y = -1000 ;
+    }
+  }
+  position_end = context.player.position - VEHICLE_LENGTH ;
+  for_chained_list_value (context.obstacles) {
+    if (handle_obstacle_collisions (value, position_begin, position_end) == 0)
+      break ;
+  }
+  position_begin -= VEHICLE_LENGTH ;
+  position_end -= VEHICLE_LENGTH ;
+  for_chained_list_value (context.bonus) {
+    got_piece = handle_bonus_collisions (value, position_begin, position_end) ;
+    if (got_piece == 0)
+      break ;
+    else if (got_piece == 2) {
+      push_chained_list (context.got_bonus, &value, sizeof (p_bonus_3D)) ;
+    }
   }
   context.bonus_rotation += 0.1 * SPEED_MULTIPLIER ;
   glutPostRedisplay () ;
